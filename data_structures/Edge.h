@@ -1,61 +1,77 @@
 //
-// Created by Enrico on 31/03/2020.
+// Created by Alessandro on 04/04/2020.
 //
 
-#ifndef ALGADVGRAPHS_UNIONFIND_H
-#define ALGADVGRAPHS_UNIONFIND_H
+#ifndef ALGADVGRAPHS_EDGE_H
+#define ALGADVGRAPHS_EDGE_H
 
-#include <map>
-#include <utility>
+#include <vector>
+#include <iostream>
 
 template <typename T>
-class UnionFind {
+class Edge {
 private:
-    std::map<T, std::pair<T, int>> data;
+    std::vector<T>* array_of_3; //contains node_1, node_2, weight
 public:
-    explicit UnionFind(T*, int);
-    [[nodiscard]] int size() const;
-    T find(const T&) const;
-    void unite(const T&, const T&);
+    explicit Edge(const std::vector<T>&);
+    explicit Edge(std::vector<T>&&);
+    Edge(const Edge &edg);
+    ~Edge();
+    T get_node_1() const;
+    T get_node_2() const;
+    T get_weight() const;
+    template <typename U>
+    friend std::ostream& operator<<(std::ostream &os, const Edge<U>& ed);
+    bool operator<(const Edge<T> &ed);
 };
 
-template<typename T>
-UnionFind<T>::UnionFind(T* raw, int sz){
-    for(int i=0; i<sz; ++i){
-        data[raw[i]] = std::make_pair(raw[i], 1);
+/*public methods*/
+template <typename T>
+Edge<T>::Edge(const std::vector<T>& cpy): array_of_3(new std::vector<T>(cpy)){
+    if(array_of_3->size() != 3) {
+        array_of_3->resize(3, 0);
+
+    }
+}
+
+template <typename T>
+Edge<T>::Edge(std::vector<T>&& cpy): array_of_3(new std::vector<T>(cpy)){
+    if(array_of_3->size() != 3) {
+        array_of_3->resize(3, 0);
     }
 }
 
 template<typename T>
-int UnionFind<T>::size() const {
-    return data.size();
+Edge<T>::Edge(const Edge &edg) {
+    (*array_of_3)[0] = edg.get_node_1();
+    (*array_of_3)[1] = edg.get_node_2();
+    (*array_of_3)[2] = edg.get_weight();
+}
+
+template <typename T>
+Edge<T>::~Edge(){
+    delete array_of_3;
 }
 
 template<typename T>
-void UnionFind<T>::unite(const T& fst, const T& snd) {
-    T f_tree = find(fst);
-    T s_tree = find(snd);
-    if(f_tree != s_tree){
-        if(data[f_tree].second >= data[s_tree].second){
-            data[s_tree].first = f_tree;
-            data[f_tree].second += data[s_tree].second;
-        } else{
-            data[f_tree].first = s_tree;
-            data[s_tree].second += data[f_tree].second;
-        }
-    }
+T Edge<T>::get_node_1() const {
+    return (*array_of_3)[0];
 }
 
 template<typename T>
-T UnionFind<T>::find(const T& elem) const {
-    T current = elem;
-    T parent = (data.at(elem)).first;
-    while(parent != current){
-        current = parent;
-        parent = (data.at(parent)).first;
-    }
-    return parent;
+T Edge<T>::get_node_2() const {
+    return (*array_of_3)[1];
 }
 
+template<typename T>
+T Edge<T>::get_weight() const {
+    return (*array_of_3)[2];
+}
 
-#endif //ALGADVGRAPHS_UNIONFIND_H
+template<typename U>
+std::ostream& operator<<(std::ostream& os, const Edge<U>& ed){
+    os << ed.get_node_1() << ' ' << ed.get_node_2() << ' ' << ed.get_weight();
+    return os;
+}
+
+#endif //ALGADVGRAPHS_EDGE_H
