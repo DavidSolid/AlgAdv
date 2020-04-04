@@ -13,6 +13,7 @@ class Parser {
 public:
     explicit Parser();
     std::vector<std::vector<int>> parse(const char* filename) const;
+    void parse(const char* filename, std::vector<std::vector<int>>& data) const;
 };
 
 /*public methods*/
@@ -42,6 +43,25 @@ std::vector<std::vector<int>> Parser::parse(const char* filename) const{
         return data;
     }else{
         return std::vector<std::vector<int>>({{0}});
+    }
+}
+
+void Parser::parse(const char *filename, std::vector<std::vector<int>> &data)const {
+    std::ifstream ifs (filename, std::ifstream::in);
+    if(ifs.good() && data.size() == 0) {
+
+        std::string line;
+
+        while (std::getline(ifs, line)) {
+            std::vector<int> lineData;
+            std::stringstream lineStream(line);
+            int value;
+            while (lineStream >> value) {
+                lineData.push_back(value);
+            }
+            data.push_back(lineData);
+        }
+        ifs.close();
     }
 }
 
