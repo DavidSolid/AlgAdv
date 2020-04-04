@@ -3,7 +3,6 @@
 #include <algorithm>
 #include "data_structures/MinHeap.h"
 #include "data_structures/UnionFind.h"
-#include "data_structures/Parser.h"
 
 int main() {
     //test min-heap
@@ -28,16 +27,5 @@ int main() {
     for(int i=0; i<7; ++i){
         std::cout << arr[i] << ": " << un.find(arr[i]) << std::endl;
     }
-
-    Parser textParser = Parser();
-
-    std::vector<std::vector<int>> wrongMatrix = textParser.parse("..\\dataset\\input_random_02_10txt");
-
-    std::vector<std::vector<int>> textMatrix = textParser.parse("..\\dataset\\input_random_02_10.txt");
-
-    std::cout << "wrong parsing : " << wrongMatrix[0][0] << std::endl;
-
-    std::cout << "right parsing : " << textMatrix[0][0] << " " << textMatrix[0][1] << std::endl;
-
     return 0;
 }
