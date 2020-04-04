@@ -42,7 +42,7 @@ Edge<T>::Edge(std::vector<T>&& cpy): array_of_3(new std::vector<T>(cpy)){
 }
 
 template<typename T>
-Edge<T>::Edge(const Edge &edg) {
+Edge<T>::Edge(const Edge &edg): array_of_3(new std::vector<T>(3)){
     (*array_of_3)[0] = edg.get_node_1();
     (*array_of_3)[1] = edg.get_node_2();
     (*array_of_3)[2] = edg.get_weight();

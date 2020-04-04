@@ -18,8 +18,7 @@ public:
 
 /*public methods*/
 
-Parser::Parser(){
-}
+Parser::Parser()= default;
 
 std::vector<std::vector<int>> Parser::parse(const char* filename) const{
 
@@ -48,7 +47,7 @@ std::vector<std::vector<int>> Parser::parse(const char* filename) const{
 
 void Parser::parse(const char *filename, std::vector<std::vector<int>> &data)const {
     std::ifstream ifs (filename, std::ifstream::in);
-    if(ifs.good() && data.size() == 0) {
+    if(ifs.good() && data.empty()) {
 
         std::string line;
 
