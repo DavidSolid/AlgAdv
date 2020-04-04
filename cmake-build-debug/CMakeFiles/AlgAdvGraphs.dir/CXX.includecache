@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/cygdrive/c/Users/alepe/Desktop/AlgAdv/data_structures/MinHeap.h
+vector
+-
+cmath
+-
+utility
+-
+
+/cygdrive/c/Users/alepe/Desktop/AlgAdv/data_structures/UnionFind.h
+map
+-
+utility
+-
+
+/cygdrive/c/Users/alepe/Desktop/AlgAdv/main.cpp
+iostream
+-
+vector
+-
+algorithm
+-
+data_structures/MinHeap.h
+/cygdrive/c/Users/alepe/Desktop/AlgAdv/data_structures/MinHeap.h
+data_structures/UnionFind.h
+/cygdrive/c/Users/alepe/Desktop/AlgAdv/data_structures/UnionFind.h
+
