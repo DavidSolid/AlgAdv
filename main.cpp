@@ -5,7 +5,6 @@
 #include "data_structures/UnionFind.h"
 #include "data_structures/Parser.h"
 #include "data_structures/Edge.h"
-#include "data_structures/EdgeAlternative.h"
 
 int main() {
     //test min-heap
@@ -40,23 +39,11 @@ int main() {
     std::cout << "right parsing : " << textMatrix[0][0] << " " << textMatrix[0][1] << std::endl;
 
     //Using the value from the first line parsed we build as many edges as described
-
-    std::cout << "First class Edge" << std::endl;
-
-    std::vector<Edge<int>> list_of_edge;
+    std::vector<Edge<int,int>> list_of_edge;
     for(int i = 0; i < textMatrix[0][1]; ++i){
-        Edge<int> temp(std::move(textMatrix[i+1]));
-        list_of_edge.push_back(temp);
+        list_of_edge.emplace_back(textMatrix[i+1][0], textMatrix[i+1][1], textMatrix[i+1][2]);
     }
     std::cout << list_of_edge[12] << std::endl;
-
-    std::cout << "Second class Edge" << std::endl;
-
-    std::vector<EdgeAlternative<int,int>> list_of_edge_alternative;
-    for(int i = 0; i < textMatrix[0][1]; ++i){
-        list_of_edge_alternative.emplace_back(textMatrix[i+1][0], textMatrix[i+1][1], textMatrix[i+1][2]);
-    }
-    std::cout << list_of_edge_alternative[12] << std::endl;
 
     return 0;
 }
