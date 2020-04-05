@@ -54,6 +54,7 @@ int main() {
     for(int i = 1; i <= textMatrix[0][1]; ++i){
         list_of_edge.emplace_back(textMatrix[i][0], textMatrix[i][1], textMatrix[i][2]);
     }
+
     for(const auto & i : list_of_edge){
         std::cout << i << std::endl;
     }
@@ -62,10 +63,30 @@ int main() {
     AdjacencyList<int,int> ad(textMatrix[0][0], list_of_edge);
     std::cout << ad.size() << std::endl;
 
-    //devo cercare come chiamare DFS() passandogli un vettore L[n] con tutti Bool = false
+    std::cout << ad.DFS(8,4)<< std::endl; // esiste un path tra 8 e 4
 
-    bool L[textMatrix[0][0]] = {false};
-    std::cout << ad.DFS(8,4,L)<< std::endl; // esiste un path tra 8 e 4
+    //test Adjacency List with custom file:
+    std::vector<std::vector<int>> test_parse = textParser.parse("..\\dataset\\1_test.txt");
+    std::vector<Edge<int,int>> list_test;
+    for(int i = 1; i <= test_parse[0][1]; ++i){
+        list_test.emplace_back(test_parse[i]);
+    }
+    AdjacencyList<int,int> ad_test(test_parse[0][0], list_test);
+    std::cout << "Number of nodes : " << ad_test.size() << std::endl;
+    std::cout << "Total weight : " << ad_test.totalCost() << std::endl;
+
+    //missing 1 2 4993 -> 0 1 4993
+    std::cout << "Does 1-2 exist? : " <<ad_test.DFS(0,1)<< std::endl;
+
+    std::cout << ad_test << std::endl;
+
+    std::cout << "Add edge 1 2 4993" << std::endl;
+
+    ad_test.unite(Edge<int,int>(0,1,4993));
+
+    std::cout << "Does 1-2 exist? : " <<ad_test.DFS(0,1)<< std::endl;
+
+    std::cout << ad_test << std::endl;
 
     return 0;
 }
