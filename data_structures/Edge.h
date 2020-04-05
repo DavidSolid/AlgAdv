@@ -24,6 +24,9 @@ public:
     W get_weight() const;
     template <typename U>
     friend std::ostream& operator<<(std::ostream &os, const Edge<U,U>& ed);
+    bool operator<(const Edge<T,W> &ed);
+    template <typename U>
+    friend bool operator<(const Edge<U,U>& ed_1, const Edge<U,U>& ed_2);
 };
 
 /*public methods*/
@@ -87,6 +90,16 @@ template<typename U>
 std::ostream& operator<<(std::ostream& os, const Edge<U,U>& ed){
     os << ed.get_node_1()+1 << ' ' << ed.get_node_2()+1 << ' ' << ed.get_weight()+1;
     return os;
+}
+
+template<typename U>
+bool operator<(const Edge<U,U> &ed_1, const Edge<U,U> & ed_2){
+    return ed_1.get_weight() < ed_2.get_weight();
+}
+
+template<typename T, typename W>
+bool Edge<T, W>::operator<(const Edge<T,W> &ed) {
+    return weight < ed.weight;
 }
 
 #endif //ALGADVGRAPHS_EDGE_H

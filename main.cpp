@@ -123,9 +123,12 @@ int main() {
 
 
         //line 3 : sort E
+        /*
         std::sort(E.begin(), E.end(), [](const Edge<int,int> & a, const Edge<int,int> & b) -> bool{
             return a.get_weight() < b.get_weight();
         });
+        */
+        std::sort(E.begin(), E.end());
 
         //line 4 : for each edge in E do
         int time = 0;
