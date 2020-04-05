@@ -9,13 +9,22 @@
 
 int main() {
     //test min-heap
-    auto to_order = std::vector<int>({2,11,3,1,4,10,5,7,6,0,8,9});
+    auto to_order = std::vector<int>({2,11,3,0,1,4,5,9,7,8,6,0,23});
     Parser textParser = Parser();
-    MinHeap<int> heap = MinHeap<int>(std::move(to_order));
-    heap.insert(5);
+    auto real_to_order = std::vector<std::pair<int, int>>();
+    for(unsigned int i = 0; i<to_order.size(); ++i){
+        real_to_order.push_back(std::make_pair(to_order[i], i));
+    }
+    MinHeap<int> heap = MinHeap<int>(std::move(real_to_order));
+    heap.decreaseUpdate(-1, 12);
     unsigned int e = heap.size();
     for(unsigned int i=0; i<e; ++i){
-        std::cout << heap.extractMin() << std::endl;
+        for(unsigned int j=0; j<e; ++j){
+            std::cout << heap.exists(j) << "-";
+        }
+        std::cout <<std::endl;
+        auto f = heap.extractMin();
+        std::cout << "(" << f.first << "," << f.second << ")" << std::endl;
     }
 
     //test union-find
