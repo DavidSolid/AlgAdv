@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <chrono>
 #include "data_structures/MinHeap.h"
 #include "data_structures/UnionFind.h"
 #include "data_structures/Parser.h"
@@ -8,7 +9,8 @@
 #include "data_structures/AdjacencyList.h"
 
 int main() {
-    //test min-heap
+    /*
+     //test min-heap
     auto to_order = std::vector<int>({2,11,3,0,1,4,5,9,7,8,6,0,23});
     Parser textParser = Parser();
     auto real_to_order = std::vector<std::pair<int, int>>();
@@ -17,9 +19,9 @@ int main() {
     }
     MinHeap<int> heap = MinHeap<int>(std::move(real_to_order));
     heap.decreaseUpdate(-1, 12);
-    unsigned int e = heap.size();
-    for(unsigned int i=0; i<e; ++i){
-        for(unsigned int j=0; j<e; ++j){
+    unsigned int e1 = heap.size();
+    for(unsigned int i=0; i<e1; ++i){
+        for(unsigned int j=0; j<e1; ++j){
             std::cout << heap.exists(j) << "-";
         }
         std::cout <<std::endl;
@@ -68,7 +70,7 @@ int main() {
     //test Adjacency List with custom file:
     std::vector<std::vector<int>> test_parse = textParser.parse("..\\dataset\\1_test.txt");
     std::vector<Edge<int,int>> list_test;
-    for(int i = 1; i <= test_parse[0][1]; ++i){
+    for(int i = 1; i < test_parse[0][1]; ++i){
         list_test.emplace_back(test_parse[i]);
     }
     AdjacencyList<int,int> ad_test(test_parse[0][0], list_test);
@@ -87,6 +89,69 @@ int main() {
     std::cout << "Does 1-2 exist? : " <<ad_test.DFS(0,1)<< std::endl;
 
     std::cout << ad_test << std::endl;
+*/
+    /*
+     * Attepmp to Kruskal with union find with
+     * 100 node "..\\dataset\\input_random_17_100.txt"
+     * must transplant to own file
+     */
+    {
+        auto start = std::chrono::steady_clock::now();
+
+        //Parse file .txt into graph G
+        Parser myParser = Parser();
+        std::vector<std::vector<int>> G = myParser.parse("..\\dataset\\input_random_28_400.txt");
+        //G[0][0] = NUMBER OF NODES
+        //G[0][1] = NUMBER OF EDGES
+
+        //save all edges in E
+        std::vector<Edge<int,int>> E;
+        for(int i = 1; i <= G[0][1]; ++i){
+            E.emplace_back(G[i]);
+        }
+
+        //line 1 : Start A empty
+        AdjacencyList<int,int> A(G[0][0]);
+
+        //line 2 : Initialize U
+        int *ar;
+        ar = new int[G[0][0]];
+        for(int i = 0; i < G[0][0]; ++i){
+            ar[i] = i;
+        }
+        UnionFind<int> U(ar, G[0][0]);
+
+
+        //line 3 : sort E
+        std::sort(E.begin(), E.end(), [](const Edge<int,int> & a, const Edge<int,int> & b) -> bool{
+            return a.get_weight() < b.get_weight();
+        });
+
+        //line 4 : for each edge in E do
+        int time = 0;
+        for(const auto & e : E){
+            ++time;
+            //line 5 : if e.node_1 and e.node_2 belong to two different connected components then
+            if(U.find(e.get_node_1()) != U.find(e.get_node_2())){
+                //line 6 : add e to A
+                A.unite(e);
+                //line 7 : unite e.node_1 and e.node_2
+                U.unite(e.get_node_1(), e.get_node_2());
+            }
+            if(A.edges() == (A.nodes() - 1))
+                break;
+        }
+
+        //line 8 : return A
+
+        auto end = std::chrono::steady_clock::now();
+        std::chrono::duration<double> elapsed_seconds = end-start;
+
+        std::cout << A;
+        std::cout << "Graph of 'input_random_28_4000.txt'" << std::endl;
+        std::cout << "Completed with " << time << " iteration vs " << G[0][1] << std::endl;
+        std::cout << "Completed in " << elapsed_seconds.count() << " seconds";
+    }
 
     return 0;
 }
