@@ -18,7 +18,8 @@ public:
     explicit AdjacencyList(int n);
     explicit AdjacencyList(int n, const std::vector<Edge<T,W>>&);
     explicit AdjacencyList(int n,std::vector<Edge<T,W>>&&);
-    [[nodiscard]] unsigned int size() const;
+    [[nodiscard]] unsigned int nodes() const;
+    [[nodiscard]] unsigned int edges() const;
     [[nodiscard]] int totalCost() const;
     void unite(Edge<T,W> ed);
     bool DFS(T v,T w)const;
@@ -77,10 +78,18 @@ AdjacencyList<T, W>::AdjacencyList(int n, std::vector<Edge<T, W>> && vector): ar
     }
 }
 
+template <typename T,typename W>
+unsigned int AdjacencyList<T,W>::nodes() const {
+    return array.size();
+}
 
 template <typename T,typename W>
-unsigned int AdjacencyList<T,W>::size() const {
-    return array.size();
+unsigned int AdjacencyList<T,W>::edges() const {
+    unsigned int cost = 0;
+    for(const auto & i : array){
+        cost += i.size();
+    }
+    return cost / 2;
 }
 
 
@@ -126,12 +135,13 @@ bool AdjacencyList<T, W>::DFS(T v, T w) const {
 
 template<typename U>
 std::ostream& operator<<(std::ostream& os, const AdjacencyList<U,U>& ad){
-    os << "Number of nodes   : " << ad.array.size() << std::endl;
+    os << "Number of nodes   : " << ad.nodes() << std::endl;
+    os << "Number of edges   : " << ad.edges() << std::endl;
     os << "Cost of all edges : " << ad.totalCost() << std::endl;
     for(int i = 0; i < ad.array.size(); ++i){
         os << i+1 << " :";
         for(int j = 0; j < ad.array[i].size(); ++j){
-            os << " ( " << ad.array[i][j].first+1 << " , " << ad.array[i][j].second << " )";
+            os << "  ( " << ad.array[i][j].first+1 << " ; " << ad.array[i][j].second << " )";
         }
         os << std::endl;
     }

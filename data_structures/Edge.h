@@ -14,8 +14,8 @@ private:
     T node_1, node_2;
     W weight;
 public:
-    explicit Edge(const std::vector<T>&);
-    explicit Edge(std::vector<T>&&);
+    explicit Edge(const std::vector<T>& cpy);
+    explicit Edge(std::vector<T>&& cpy);
     explicit Edge(T n1, T n2, W w);
     Edge(const Edge &edg);
     ~Edge();
@@ -28,7 +28,7 @@ public:
 
 /*public methods*/
 template <typename T,typename W>
-Edge<T,W>::Edge(const std::vector<T>& cpy){
+Edge<T,W>::Edge(const std::vector<T>& cpy): node_1(0), node_2(0), weight(0){
     if(cpy.size() < 3) {
         node_1 = 0;
         node_2 = 0;
@@ -41,7 +41,7 @@ Edge<T,W>::Edge(const std::vector<T>& cpy){
 }
 
 template <typename T,typename W>
-Edge<T,W>::Edge(std::vector<T>&& cpy){
+Edge<T,W>::Edge(std::vector<T>&& cpy): node_1(0), node_2(0), weight(0){
     if(cpy.size() < 3) {
         node_1 = 0;
         node_2 = 0;
@@ -85,7 +85,7 @@ W Edge<T,W>::get_weight() const {
 
 template<typename U>
 std::ostream& operator<<(std::ostream& os, const Edge<U,U>& ed){
-    os << ed.get_node_1() << ' ' << ed.get_node_2() << ' ' << ed.get_weight();
+    os << ed.get_node_1()+1 << ' ' << ed.get_node_2()+1 << ' ' << ed.get_weight()+1;
     return os;
 }
 
