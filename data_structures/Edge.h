@@ -30,9 +30,9 @@ public:
 template <typename T,typename W>
 Edge<T,W>::Edge(const std::vector<T>& cpy){
     if(cpy.size() < 3) {
-        node_1 = NULL;
-        node_2 = NULL;
-        weight = NULL;
+        node_1 = 0;
+        node_2 = 0;
+        weight = 0;
     }else {
         node_1 = cpy[0];
         node_2 = cpy[1];
@@ -43,9 +43,9 @@ Edge<T,W>::Edge(const std::vector<T>& cpy){
 template <typename T,typename W>
 Edge<T,W>::Edge(std::vector<T>&& cpy){
     if(cpy.size() < 3) {
-        node_1 = NULL;
-        node_2 = NULL;
-        weight = NULL;
+        node_1 = 0;
+        node_2 = 0;
+        weight = 0;
     }else {
         node_1 = cpy[0];
         node_2 = cpy[1];
