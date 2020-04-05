@@ -39,6 +39,13 @@ std::vector<std::vector<int>> Parser::parse(const char* filename) const{
             data.push_back(lineData);
         }
         ifs.close();
+
+        // change all id{1...n} to id-1{0...n-1}
+        for(int i = 0; i < data[0][1]; ++i){
+            data[i+1][0] -= 1;
+            data[i+1][1] -= 1;
+        }
+
         return data;
     }else{
         return std::vector<std::vector<int>>({{0}});
@@ -61,6 +68,12 @@ void Parser::parse(const char *filename, std::vector<std::vector<int>> &data)con
             data.push_back(lineData);
         }
         ifs.close();
+    }
+
+    // change all id{1...n} to id-1{0...n-1}
+    for(int i = 0; i < data[0][1]; ++i){
+        data[i+1][0] -= 1;
+        data[i+1][1] -= 1;
     }
 }
 
