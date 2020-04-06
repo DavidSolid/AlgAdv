@@ -100,9 +100,12 @@ int main() {
 
         //Parse file .txt into graph G
         Parser myParser = Parser();
-        std::vector<std::vector<int>> G = myParser.parse("..\\dataset\\input_random_28_400.txt");
+        std::vector<std::vector<int>> G = myParser.parse("..\\dataset\\input_random_13_80.txt");
         //G[0][0] = NUMBER OF NODES
         //G[0][1] = NUMBER OF EDGES
+        for(int i = 1; i <= G[0][1]; ++i){
+            G[i][2] += 10000;
+        }
 
         //save all edges in E
         std::vector<Edge<int,int>> E;
@@ -120,7 +123,6 @@ int main() {
             ar[i] = i;
         }
         UnionFind<int> U(ar, G[0][0]);
-
 
         //line 3 : sort E
         /*
@@ -151,9 +153,11 @@ int main() {
         std::chrono::duration<double> elapsed_seconds = end-start;
 
         std::cout << A;
-        std::cout << "Graph of 'input_random_28_4000.txt'" << std::endl;
+        std::cout << "Graph of 'input_random_02_10.txt'" << std::endl;
         std::cout << "Completed with " << time << " iteration vs " << G[0][1] << std::endl;
-        std::cout << "Completed in " << elapsed_seconds.count() << " seconds";
+        std::cout << "Completed in " << elapsed_seconds.count() << " seconds" << std::endl;
+
+        A.matrixView();
     }
 
     return 0;

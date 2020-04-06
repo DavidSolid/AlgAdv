@@ -8,6 +8,7 @@
 #include <vector>
 #include <utility>
 #include <iostream>
+#include <climits>
 
 template <typename T,typename W>
 class AdjacencyList {
@@ -22,6 +23,9 @@ public:
     [[nodiscard]] unsigned int edges() const;
     [[nodiscard]] int totalCost() const;
     void unite(Edge<T,W> ed);
+    W isAdjacent(T n1, T n2) const;
+    void matrixView()  const;
+    W** asMatrix()  const;
     bool DFS(T v,T w)const;
     template <typename U>
     friend std::ostream& operator<<(std::ostream &os, const AdjacencyList<U,U>& ad);
@@ -29,8 +33,7 @@ public:
 
 /*private methods*/
 
-/*
- * Same as DSF, we just do not create the list of visited node L[n], but receive it from DFS()
+/* Same as DSF, we just do not create the list of visited node L[n], but receive it from DFS()
  */
 template <typename T,typename W>
 bool AdjacencyList<T, W>::DFS_inside(T v, T w, bool L[]) const {
@@ -108,6 +111,56 @@ template<typename T, typename W>
 void AdjacencyList<T, W>::unite(Edge<T,W> ed){
     array[ed.get_node_1()].push_back(std::make_pair(ed.get_node_2(), ed.get_weight()));
     array[ed.get_node_2()].push_back(std::make_pair(ed.get_node_1(), ed.get_weight()));
+}
+
+/*
+ * Return the minimum weight W of the edge between n1 and n2
+ * otherwise return INT_MAX
+ */
+template<typename T, typename W>
+W AdjacencyList<T, W>::isAdjacent(T n1, T n2) const {
+    W min_weight = INT_MAX;
+    for(const auto & pair : array[n1]){
+        if(pair.first == n2 && pair.second < min_weight) {
+            min_weight = pair.second;
+        }
+    }
+    return min_weight;
+}
+
+/* Multigraph matrix contains weight of minimum edges between vertices
+ */
+template<typename T, typename W>
+void AdjacencyList<T, W>::matrixView() const {
+    for(int i = 0; i < array.size(); ++i){
+        for(int j = 0; j < array.size(); ++j){
+            W mom = isAdjacent(i,j);
+            if(mom != INT_MAX){
+                std::cout << mom << ", ";
+            }else{
+                std::cout << "0, ";
+            }
+        }
+        std::cout << std::endl;
+    }
+}
+
+/* Multigraph matrix contains weight of minimum edges between vertices
+ */
+template<typename T, typename W>
+W** AdjacencyList<T, W>::asMatrix() const {
+    W matrix[array.size()][array.size()];
+    for(int i = 0; i < array.size(); ++i){
+        for(int j = 0; j < array.size(); ++j){
+            W mom = isAdjacent(i,j);
+            if(mom != INT_MAX){
+                matrix[i][j] = mom;
+            }else{
+                matrix[i][j] = 0;
+            }
+        }
+    }
+    return matrix;
 }
 
 /* DFS fast implementation:
