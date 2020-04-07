@@ -3,11 +3,13 @@
 #include <vector>
 #include <algorithm>
 #include <chrono>
+#include <numeric>
 #include "data_structures/MinHeap.h"
 #include "data_structures/UnionFind.h"
 #include "data_structures/Parser.h"
 #include "data_structures/Edge.h"
 #include "data_structures/AdjacencyList.h"
+#include "algorithms/kruskal_union_find.h"
 
 int main() {
     /*
@@ -114,41 +116,9 @@ int main() {
             E.emplace_back(G[i]);
         }
 
-        //line 1 : Start A empty
-        AdjacencyList<int,int> A(G[0][0]);
-
-        //line 2 : Initialize U
-        int *ar;
-        ar = new int[G[0][0]];
-        for(int i = 0; i < G[0][0]; ++i){
-            ar[i] = i;
-        }
-        UnionFind<int> U(ar, G[0][0]);
-
-        //line 3 : sort E
-        /*
-        std::sort(E.begin(), E.end(), [](const Edge<int,int> & a, const Edge<int,int> & b) -> bool{
-            return a.get_weight() < b.get_weight();
-        });
-        */
-        std::sort(E.begin(), E.end());
-
-        //line 4 : for each edge in E do
-        int time = 0;
-        for(const auto & e : E){
-            ++time;
-            //line 5 : if e.node_1 and e.node_2 belong to two different connected components then
-            if(U.find(e.get_node_1()) != U.find(e.get_node_2())){
-                //line 6 : add e to A
-                A.unite(e);
-                //line 7 : unite e.node_1 and e.node_2
-                U.unite(e.get_node_1(), e.get_node_2());
-            }
-            if(A.edges() == (A.nodes() - 1))
-                break;
-        }
-
-        //line 8 : return A
+        std::pair<int, AdjacencyList<int, int>> results = Kruskal_Union_Find<int, int>(G[0][0], E);
+        int time = results.first;
+        auto A = results.second;
 
         auto end = std::chrono::steady_clock::now();
         std::chrono::duration<double> elapsed_seconds = end-start;
@@ -166,7 +136,7 @@ int main() {
         std::ofstream ofs(R"(C:\Users\alepe\Desktop\AlgAdv\dataset\1_test.txt)", std::ifstream::out | std::ifstream::trunc);
         if(ofs.good()){
             for(const auto & row : matrix){
-                for(int j = 0; j < row.size(); ++j){
+                for(unsigned int j = 0; j < row.size(); ++j){
                     ofs << row[j];
                     if(j != (row.size() - 1)){
                         ofs << ", ";
