@@ -1,13 +1,13 @@
 //
-// Created by Enrico on 07/04/2020.
+// Created by Alessandro on 06/04/2020.
 //
 
 #ifndef ALGADVGRAPHS_KRUSKAL_UNION_FIND_H
 #define ALGADVGRAPHS_KRUSKAL_UNION_FIND_H
 
-#include "../data_structures/AdjacencyList.h"
-#include "../data_structures/Edge.h"
-#include "../data_structures/AdjacencyList.h"
+#include "../graph_structures/AdjacencyList.h"
+#include "../graph_structures/Edge.h"
+#include "../graph_structures/AdjacencyList.h"
 
 template <typename T, typename W>
 std::pair<int, AdjacencyList<T, W>> Kruskal_Union_Find(unsigned int, std::vector<Edge<T, W>>);

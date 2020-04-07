@@ -6,9 +6,9 @@
 #include <numeric>
 #include "data_structures/MinHeap.h"
 #include "data_structures/UnionFind.h"
-#include "data_structures/Parser.h"
-#include "data_structures/Edge.h"
-#include "data_structures/AdjacencyList.h"
+#include "utility/Parser.h"
+#include "graph_structures/Edge.h"
+#include "graph_structures/AdjacencyList.h"
 #include "algorithms/kruskal_union_find.h"
 
 int main() {
