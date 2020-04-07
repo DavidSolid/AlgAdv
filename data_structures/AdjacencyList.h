@@ -25,7 +25,7 @@ public:
     void unite(Edge<T,W> ed);
     W isAdjacent(T n1, T n2) const;
     void matrixView()  const;
-    W** asMatrix()  const;
+    std::vector<std::vector<W>> asMatrix()  const;
     bool DFS(T v,T w)const;
     template <typename U>
     friend std::ostream& operator<<(std::ostream &os, const AdjacencyList<U,U>& ad);
@@ -145,18 +145,18 @@ void AdjacencyList<T, W>::matrixView() const {
     }
 }
 
-/* Multigraph matrix contains weight of minimum edges between vertices
- */
+
+//Multigraph matrix contains weight of minimum edges between vertices
 template<typename T, typename W>
-W** AdjacencyList<T, W>::asMatrix() const {
-    W matrix[array.size()][array.size()];
+std::vector<std::vector<W>> AdjacencyList<T, W>::asMatrix() const {
+    std::vector<std::vector<W>> matrix(array.size(), std::vector<W>());
     for(int i = 0; i < array.size(); ++i){
         for(int j = 0; j < array.size(); ++j){
             W mom = isAdjacent(i,j);
             if(mom != INT_MAX){
-                matrix[i][j] = mom;
+                matrix[i].push_back(mom);
             }else{
-                matrix[i][j] = 0;
+                matrix[i].push_back(0);
             }
         }
     }

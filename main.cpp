@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <algorithm>
 #include <chrono>
@@ -100,7 +101,7 @@ int main() {
 
         //Parse file .txt into graph G
         Parser myParser = Parser();
-        std::vector<std::vector<int>> G = myParser.parse("..\\dataset\\input_random_13_80.txt");
+        std::vector<std::vector<int>> G = myParser.parse("..\\dataset\\input_random_25_400.txt");
         //G[0][0] = NUMBER OF NODES
         //G[0][1] = NUMBER OF EDGES
         for(int i = 1; i <= G[0][1]; ++i){
@@ -156,8 +157,29 @@ int main() {
         std::cout << "Graph of 'input_random_02_10.txt'" << std::endl;
         std::cout << "Completed with " << time << " iteration vs " << G[0][1] << std::endl;
         std::cout << "Completed in " << elapsed_seconds.count() << " seconds" << std::endl;
+        std::cout << A.nodes() << " " << A.edges() << std::endl;
 
-        A.matrixView();
+
+
+        std::vector<std::vector<int>> matrix = A.asMatrix();
+
+        std::ofstream ofs(R"(C:\Users\alepe\Desktop\AlgAdv\dataset\1_test.txt)", std::ifstream::out | std::ifstream::trunc);
+        if(ofs.good()){
+            for(const auto & row : matrix){
+                for(int j = 0; j < row.size(); ++j){
+                    ofs << row[j];
+                    if(j != (row.size() - 1)){
+                        ofs << ", ";
+                    }
+                }
+                ofs << std::endl;
+            }
+            std::cout << "Adjacency Matrix saved on file" << std::endl;
+        }else{
+            std::cout << "Failed to save Adjacency Matrix on file" << std::endl;
+        }
+
+        ofs.close();
     }
 
     return 0;
