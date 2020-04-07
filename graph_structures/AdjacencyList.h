@@ -22,13 +22,14 @@ public:
     [[nodiscard]] unsigned int nodes() const;
     [[nodiscard]] unsigned int edges() const;
     [[nodiscard]] int totalCost() const;
-    void unite(Edge<T,W> ed);
+    void add(Edge<T,W> ed);
     W isAdjacent(T n1, T n2) const;
     void matrixView()  const;
     std::vector<std::vector<W>> asMatrix()  const;
     bool DFS(T v,T w)const;
     template <typename U>
     friend std::ostream& operator<<(std::ostream &os, const AdjacencyList<U,U>& ad);
+    bool operator==(const AdjacencyList<T,W> &ed);
 };
 
 /*private methods*/
@@ -108,7 +109,7 @@ int AdjacencyList<T, W>::totalCost() const {
 }
 
 template<typename T, typename W>
-void AdjacencyList<T, W>::unite(Edge<T,W> ed){
+void AdjacencyList<T, W>::add(Edge<T,W> ed){
     array[ed.get_node_1()].push_back(std::make_pair(ed.get_node_2(), ed.get_weight()));
     array[ed.get_node_2()].push_back(std::make_pair(ed.get_node_1(), ed.get_weight()));
 }
@@ -199,6 +200,11 @@ std::ostream& operator<<(std::ostream& os, const AdjacencyList<U,U>& ad){
         os << std::endl;
     }
     return os;
+}
+
+template<typename T, typename W>
+bool AdjacencyList<T,W>::operator==(const AdjacencyList<T,W>& ad){
+    return array == ad.array;
 }
 
 #endif //ALGADVGRAPHS_ADJACENCYLIST_H
