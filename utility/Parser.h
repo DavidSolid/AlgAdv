@@ -12,15 +12,15 @@
 class Parser {
 public:
     explicit Parser();
-    std::vector<std::vector<int>> parse(const char* filename) const;
-    void parse(const char* filename, std::vector<std::vector<int>>& data) const;
+    std::vector<std::vector<int>> parse(const std::filesystem::path& filename) const;
+    void parse(const std::filesystem::path& filename, std::vector<std::vector<int>>& data) const;
 };
 
 /*public methods*/
 
 Parser::Parser()= default;
 
-std::vector<std::vector<int>> Parser::parse(const char* filename) const{
+std::vector<std::vector<int>> Parser::parse(const std::filesystem::path& filename) const{
 
     std::ifstream ifs (filename, std::ifstream::in);
 
@@ -52,7 +52,7 @@ std::vector<std::vector<int>> Parser::parse(const char* filename) const{
     }
 }
 
-void Parser::parse(const char *filename, std::vector<std::vector<int>> &data)const {
+void Parser::parse(const std::filesystem::path& filename, std::vector<std::vector<int>> &data)const {
     std::ifstream ifs (filename, std::ifstream::in);
     if(ifs.good() && data.empty()) {
 

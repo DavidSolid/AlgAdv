@@ -18,7 +18,7 @@ private:
 public:
     explicit AdjacencyList(int n);
     explicit AdjacencyList(int n, const std::vector<Edge<W>>&);
-    explicit AdjacencyList(int n,std::vector<Edge<W>>&&);
+    explicit AdjacencyList(int n, std::vector<Edge<W>>&&);
     [[nodiscard]] unsigned int nodes() const;
     [[nodiscard]] unsigned int edges() const;
     [[nodiscard]] int totalCost() const;

@@ -9,13 +9,13 @@
 #include "../graph_structures/AdjacencyList.h"
 #include "../data_structures/MinHeap.h"
 
-template <typename T, typename W>
+template <typename W>
 std::pair<int, AdjacencyList<W>> Prim(unsigned int, AdjacencyList<W>);
 
-template <typename T, typename W>
+template <typename W>
 std::pair<int, AdjacencyList<W>> Prim(unsigned int n_vec, AdjacencyList<W> A){
-    std::vector<std::pair<W, T>> V(n_vec);
-    std::vector<T> pi(n_vec);
+    std::vector<std::pair<W, int>> V(n_vec);
+    std::vector<int> pi(n_vec);
     V[0] = std::make_pair(0, 0);
     pi[0] = -1;
     for(unsigned int i = 1; i < n_vec; ++i){
@@ -24,8 +24,8 @@ std::pair<int, AdjacencyList<W>> Prim(unsigned int n_vec, AdjacencyList<W> A){
     }
     MinHeap Q(V);
     while(Q.size()!=0){
-        std::pair<W, T> u = Q.extractMin();
-        for(std::pair<T, W> v: A[u.second]){
+        std::pair<W, int> u = Q.extractMin();
+        for(std::pair<int, W> v: A[u.second]){
             /*v = v.first; w(u,v) = v.second*/
             if(Q.exists(v.first) && v.second < V[v.first].first /*key[v]*/){
                 Q.decreaseUpdate(v.second, v.first);
