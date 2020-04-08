@@ -104,7 +104,7 @@ int main() {
 
         //Parse file .txt into graph G
         Parser myParser = Parser();
-        std::vector<std::vector<int>> G = myParser.parse("..\\dataset\\input_random_25_400.txt");
+        std::vector<std::vector<int>> G = myParser.parse("..\\dataset\\input_random_68_100000.txt");
         //G[0][0] = NUMBER OF NODES
         //G[0][1] = NUMBER OF EDGES
         for(int i = 1; i <= G[0][1]; ++i){
@@ -112,13 +112,13 @@ int main() {
         }
 
         //save all edges in E
-        std::vector<Edge<int,int>> E;
+        std::vector<Edge<int>> E;
         for(int i = 1; i <= G[0][1]; ++i){
             E.emplace_back(G[i]);
         }
 
-        std::pair<int, AdjacencyList<int, int>> results_Kruskal_Union_Find = Kruskal_Union_Find<int, int>(G[0][0], E);
-        std::pair<int, AdjacencyList<int, int>> results_Kruskal_Naive = Kruskal_Naive<int, int>(G[0][0], E);
+        std::pair<int, AdjacencyList<int>> results_Kruskal_Union_Find = Kruskal_Union_Find<int>(G[0][0], E);
+        std::pair<int, AdjacencyList<int>> results_Kruskal_Naive = Kruskal_Naive<int>(G[0][0], E);
 
         int time_Kruskal_Union_Find = results_Kruskal_Union_Find.first;
         auto A_Kruskal_Union_Find = results_Kruskal_Union_Find.second;
@@ -132,16 +132,18 @@ int main() {
         std::chrono::duration<double> elapsed_seconds = end-start;
 
         //std::cout << A_Kruskal_Union_Find;
-        std::cout << "Kruskal Union Find Completed with " << time_Kruskal_Union_Find << " iteration vs " << G[0][1] << std::endl;
+        std::cout << "Kruskal Union Find Completed with  " << time_Kruskal_Union_Find << " iteration vs " << G[0][1] << std::endl;
         std::cout << "Kruskal Union Naive Completed with " << time_Kruskal_Naive << " iteration vs " << G[0][1] << std::endl;
 
         //given that AdjacencyList is a vector of vector we try ==
+        A_Kruskal_Naive.order_array();
+        A_Kruskal_Union_Find.order_array();
         bool test_equal = A_Kruskal_Naive == A_Kruskal_Union_Find;
         std::cout << "Did we get the same MST? " << test_equal << std::endl;
 
 
         /*
-        std::vector<std::vector<int>> matrix = A.asMatrix();
+        std::vector<std::vector<int>> matrix = A_Kruskal_Naive.asMatrix();
 
         std::ofstream ofs(R"(C:\Users\alepe\Desktop\AlgAdv\dataset\1_test.txt)", std::ifstream::out | std::ifstream::trunc);
         if(ofs.good()){
@@ -160,7 +162,7 @@ int main() {
         }
 
         ofs.close();
-        */
+         */
     }
 
     return 0;

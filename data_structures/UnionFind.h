@@ -8,33 +8,29 @@
 #include <map>
 #include <utility>
 
-template <typename T>
 class UnionFind {
 private:
-    std::map<T, std::pair<T, int>> data;
+    std::map<int, std::pair<int, int>> data;
 public:
-    explicit UnionFind(T*, int);
+    explicit UnionFind(int*, int);
     [[nodiscard]] int size() const;
-    T find(const T&) const;
-    void unite(const T&, const T&);
+    [[nodiscard]] int find(const int&) const;
+    void unite(const int&, const int&);
 };
 
-template<typename T>
-UnionFind<T>::UnionFind(T* raw, int sz){
+UnionFind::UnionFind(int* raw, int sz){
     for(int i=0; i<sz; ++i){
         data[raw[i]] = std::make_pair(raw[i], 1);
     }
 }
 
-template<typename T>
-int UnionFind<T>::size() const {
+int UnionFind::size() const {
     return data.size();
 }
 
-template<typename T>
-void UnionFind<T>::unite(const T& fst, const T& snd) {
-    T f_tree = find(fst);
-    T s_tree = find(snd);
+void UnionFind::unite(const int& fst, const int& snd) {
+    int f_tree = find(fst);
+    int s_tree = find(snd);
     if(f_tree != s_tree){
         if(data[f_tree].second >= data[s_tree].second){
             data[s_tree].first = f_tree;
@@ -46,10 +42,9 @@ void UnionFind<T>::unite(const T& fst, const T& snd) {
     }
 }
 
-template<typename T>
-T UnionFind<T>::find(const T& elem) const {
-    T current = elem;
-    T parent = (data.at(elem)).first;
+int UnionFind::find(const int& elem) const {
+    int current = elem;
+    int parent = (data.at(elem)).first;
     while(parent != current){
         current = parent;
         parent = (data.at(parent)).first;

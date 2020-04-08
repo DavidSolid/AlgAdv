@@ -5,16 +5,15 @@
 #ifndef ALGADVGRAPHS_PRIM_H
 #define ALGADVGRAPHS_PRIM_H
 
-#include "../graph_structures/AdjacencyList.h"
 #include "../graph_structures/Edge.h"
 #include "../graph_structures/AdjacencyList.h"
 #include "../data_structures/MinHeap.h"
 
 template <typename T, typename W>
-std::pair<int, AdjacencyList<T, W>> Prim(unsigned int, AdjacencyList<T, W>);
+std::pair<int, AdjacencyList<W>> Prim(unsigned int, AdjacencyList<W>);
 
 template <typename T, typename W>
-std::pair<int, AdjacencyList<T, W>> Prim(unsigned int n_vec, AdjacencyList<T, W> A){
+std::pair<int, AdjacencyList<W>> Prim(unsigned int n_vec, AdjacencyList<W> A){
     std::vector<std::pair<W, T>> V(n_vec);
     std::vector<T> pi(n_vec);
     V[0] = std::make_pair(0, 0);
@@ -23,7 +22,7 @@ std::pair<int, AdjacencyList<T, W>> Prim(unsigned int n_vec, AdjacencyList<T, W>
         V[i] = std::make_pair(INT_MAX, i);
         pi[i] = -1;
     }
-    MinHeap<W> Q(V);
+    MinHeap Q(V);
     while(Q.size()!=0){
         std::pair<W, T> u = Q.extractMin();
         for(std::pair<T, W> v: A[u.second]){
@@ -37,9 +36,9 @@ std::pair<int, AdjacencyList<T, W>> Prim(unsigned int n_vec, AdjacencyList<T, W>
         }
     }
     /*return V*/
-    AdjacencyList<T, W> res(n_vec);
+    AdjacencyList<W> res(n_vec);
     for(unsigned int i = 0; i < n_vec; ++i){
-        if(p[i] != -1 && p[i] != i)
+        if(pi[i] != -1 && pi[i] != i)
             res.add(Edge(i, pi[i], V[i].first));
     }
     return std::make_pair(n_vec, res);

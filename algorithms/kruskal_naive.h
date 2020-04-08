@@ -8,16 +8,16 @@
 #include "../graph_structures/Edge.h"
 #include "../graph_structures/AdjacencyList.h"
 
-template <typename T, typename W>
-std::pair<int, AdjacencyList<T, W>> Kruskal_Naive(unsigned int, std::vector<Edge<T, W>>);
+template <typename W>
+std::pair<int, AdjacencyList<W>> Kruskal_Naive(unsigned int, std::vector<Edge<W>>);
 
-template <typename T, typename W>
-std::pair<int, AdjacencyList<T, W>> Kruskal_Naive(unsigned int n_vec, std::vector<Edge<T, W>> E){
+template <typename W>
+std::pair<int, AdjacencyList<W>> Kruskal_Naive(unsigned int n_vec, std::vector<Edge<W>> E){
     //number of iteration of the outer for
     int iter = 0;
 
     //line 1 : Initialize A empty
-    AdjacencyList<int,int> A(n_vec);
+    AdjacencyList<int> A(n_vec);
 
     //line 2 : sort E
     std::sort(E.begin(), E.end());

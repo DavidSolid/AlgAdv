@@ -8,30 +8,30 @@
 #include <vector>
 #include <iostream>
 
-template <typename T,typename W>
+template <typename W>
 class Edge {
 private:
-    T node_1, node_2;
+    int node_1, node_2;
     W weight;
 public:
-    explicit Edge(const std::vector<T>& cpy);
-    explicit Edge(std::vector<T>&& cpy);
-    explicit Edge(T n1, T n2, W w);
+    explicit Edge(const std::vector<int>& cpy);
+    explicit Edge(std::vector<int>&& cpy);
+    explicit Edge(int n1, int n2, W w);
     Edge(const Edge &edg);
     ~Edge();
-    T get_node_1() const;
-    T get_node_2() const;
+    [[nodiscard]] int get_node_1() const;
+    [[nodiscard]] int get_node_2() const;
     W get_weight() const;
+    bool operator<(const Edge<W> &ed);
     template <typename U>
-    friend std::ostream& operator<<(std::ostream &os, const Edge<U,U>& ed);
-    bool operator<(const Edge<T,W> &ed);
+    friend std::ostream& operator<<(std::ostream &os, const Edge<U>& ed);
     template <typename U>
-    friend bool operator<(const Edge<U,U>& ed_1, const Edge<U,U>& ed_2);
+    friend bool operator<(const Edge<U>& ed_1, const Edge<U>& ed_2);
 };
 
 /*public methods*/
-template <typename T,typename W>
-Edge<T,W>::Edge(const std::vector<T>& cpy): node_1(0), node_2(0), weight(0){
+template <typename W>
+Edge<W>::Edge(const std::vector<int>& cpy): node_1(0), node_2(0), weight(0){
     if(cpy.size() < 3) {
         node_1 = 0;
         node_2 = 0;
@@ -43,8 +43,8 @@ Edge<T,W>::Edge(const std::vector<T>& cpy): node_1(0), node_2(0), weight(0){
     }
 }
 
-template <typename T,typename W>
-Edge<T,W>::Edge(std::vector<T>&& cpy): node_1(0), node_2(0), weight(0){
+template <typename W>
+Edge<W>::Edge(std::vector<int>&& cpy): node_1(0), node_2(0), weight(0){
     if(cpy.size() < 3) {
         node_1 = 0;
         node_2 = 0;
@@ -56,49 +56,48 @@ Edge<T,W>::Edge(std::vector<T>&& cpy): node_1(0), node_2(0), weight(0){
     }
 }
 
-template <typename T,typename W>
-Edge<T,W>::Edge(const T n1, const T n2, const W w): node_1(n1), node_2(n2), weight(w){
+template <typename W>
+Edge<W>::Edge(const int n1, const int n2, const W w): node_1(n1), node_2(n2), weight(w){
 }
 
-template <typename T,typename W>
-Edge<T,W>::Edge(const Edge &edg){
+template <typename W>
+Edge<W>::Edge(const Edge &edg){
     node_1 = edg.get_node_1();
     node_2 = edg.get_node_2();
     weight = edg.get_weight();
 }
 
-template <typename T,typename W>
-Edge<T,W>::~Edge(){
-}
+template <typename W>
+Edge<W>::~Edge()= default;
 
-template<typename T, typename W>
-T Edge<T,W>::get_node_1() const {
+template<typename W>
+int Edge<W>::get_node_1() const {
     return node_1;
 }
 
-template<typename T, typename W>
-T Edge<T,W>::get_node_2() const {
+template<typename W>
+int Edge<W>::get_node_2() const {
     return node_2;
 }
 
-template<typename T, typename W>
-W Edge<T,W>::get_weight() const {
+template<typename W>
+W Edge<W>::get_weight() const {
     return weight;
 }
 
 template<typename U>
-std::ostream& operator<<(std::ostream& os, const Edge<U,U>& ed){
+std::ostream& operator<<(std::ostream& os, const Edge<U>& ed){
     os << ed.get_node_1()+1 << ' ' << ed.get_node_2()+1 << ' ' << ed.get_weight()+1;
     return os;
 }
 
 template<typename U>
-bool operator<(const Edge<U,U> &ed_1, const Edge<U,U> & ed_2){
+bool operator<(const Edge<U> &ed_1, const Edge<U> & ed_2){
     return ed_1.get_weight() < ed_2.get_weight();
 }
 
-template<typename T, typename W>
-bool Edge<T, W>::operator<(const Edge<T,W> &ed) {
+template<typename W>
+bool Edge<W>::operator<(const Edge<W> &ed) {
     return weight < ed.weight;
 }
 

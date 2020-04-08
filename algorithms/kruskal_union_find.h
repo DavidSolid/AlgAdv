@@ -8,22 +8,22 @@
 #include "../graph_structures/Edge.h"
 #include "../graph_structures/AdjacencyList.h"
 
-template <typename T, typename W>
-std::pair<int, AdjacencyList<T, W>> Kruskal_Union_Find(unsigned int, std::vector<Edge<T, W>>);
+template <typename W>
+std::pair<int, AdjacencyList<W>> Kruskal_Union_Find(unsigned int, std::vector<Edge<W>>);
 
-template <typename T, typename W>
-std::pair<int, AdjacencyList<T, W>> Kruskal_Union_Find(unsigned int n_vec, std::vector<Edge<T, W>> E){
+template <typename W>
+std::pair<int, AdjacencyList<W>> Kruskal_Union_Find(unsigned int n_vec, std::vector<Edge<W>> E){
     //number of iteration of the outer for
     int iter = 0;
 
     //line 1 : Initialize A empty
-    AdjacencyList<int,int> A(n_vec);
+    AdjacencyList<int> A(n_vec);
 
     //line 2 : Initialize U with V
     int *V;
     V = new int[n_vec];
     std::iota(V, V + n_vec, 0);
-    UnionFind<int> U(V, n_vec);
+    UnionFind U(V, n_vec);
     //todo: passare un anonimo in futuro
 
     //line 3 : sort E

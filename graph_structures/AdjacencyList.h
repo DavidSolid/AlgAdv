@@ -10,34 +10,36 @@
 #include <iostream>
 #include <climits>
 
-template <typename T,typename W>
+template <typename W>
 class AdjacencyList {
 private:
-    std::vector< std::vector< std::pair<T,W> > > array;
-    bool DFS_inside(T v,T w,bool L[])const;
+    std::vector< std::vector< std::pair<int,W> > > array;
+    bool DFS_inside(int v,int w,bool L[])const;
 public:
     explicit AdjacencyList(int n);
-    explicit AdjacencyList(int n, const std::vector<Edge<T,W>>&);
-    explicit AdjacencyList(int n,std::vector<Edge<T,W>>&&);
+    explicit AdjacencyList(int n, const std::vector<Edge<W>>&);
+    explicit AdjacencyList(int n,std::vector<Edge<W>>&&);
     [[nodiscard]] unsigned int nodes() const;
     [[nodiscard]] unsigned int edges() const;
     [[nodiscard]] int totalCost() const;
-    void add(Edge<T,W> ed);
-    W isAdjacent(T n1, T n2) const;
+    void add(Edge<W> ed);
+    W isAdjacent(int n1, int n2) const;
     void matrixView()  const;
     std::vector<std::vector<W>> asMatrix()  const;
-    bool DFS(T v,T w)const;
+    [[nodiscard]] bool DFS(int v,int w)const;
     template <typename U>
-    friend std::ostream& operator<<(std::ostream &os, const AdjacencyList<U,U>& ad);
-    bool operator==(const AdjacencyList<T,W> &ed);
+    friend std::ostream& operator<<(std::ostream &os, const AdjacencyList<U>& ad);
+    void order_array();
+    bool operator==(const AdjacencyList<W> &ad) const;
+    std::vector< std::pair<int,W> >& operator[](int i) const;
 };
 
 /*private methods*/
 
 /* Same as DSF, we just do not create the list of visited node L[n], but receive it from DFS()
  */
-template <typename T,typename W>
-bool AdjacencyList<T, W>::DFS_inside(T v, T w, bool L[]) const {
+template <typename W>
+bool AdjacencyList<W>::DFS_inside(int v, int w, bool L[]) const {
     L[v] = true; //preemptively set that the node v has been visited, to skip next call of DFS_inside(v,...)
     for(int i=0; i < array[v].size(); ++i){ //cycle all adjacent node of v
         if(L[array[v][i].first] == 0){ //if we have not check before this particular adjacent node of v then
@@ -54,12 +56,12 @@ bool AdjacencyList<T, W>::DFS_inside(T v, T w, bool L[]) const {
 }
 
 /*public methods*/
-template <typename T,typename W>
-AdjacencyList<T,W>::AdjacencyList(int n): array(n, std::vector<std::pair<T,W>>()){
+template <typename W>
+AdjacencyList<W>::AdjacencyList(int n): array(n, std::vector<std::pair<int,W>>()){
 }
 
-template<typename T, typename W>
-AdjacencyList<T, W>::AdjacencyList(int n, const std::vector<Edge<T, W>> & vector): array(n, std::vector<std::pair<T,W>>()) {
+template<typename W>
+AdjacencyList<W>::AdjacencyList(int n, const std::vector<Edge<W>> & vector): array(n, std::vector<std::pair<int,W>>()) {
     for(const auto & i : vector){
         /* add both sides:
          * [v1] (v2,w)
@@ -70,8 +72,8 @@ AdjacencyList<T, W>::AdjacencyList(int n, const std::vector<Edge<T, W>> & vector
     }
 }
 
-template<typename T, typename W>
-AdjacencyList<T, W>::AdjacencyList(int n, std::vector<Edge<T, W>> && vector): array(n, std::vector<std::pair<T,W>>()) {
+template<typename W>
+AdjacencyList<W>::AdjacencyList(int n, std::vector<Edge<W>> && vector): array(n, std::vector<std::pair<int,W>>()) {
     for(const auto & i : vector){
         /* add both sides:
          * [v1] (v2,w)
@@ -82,13 +84,13 @@ AdjacencyList<T, W>::AdjacencyList(int n, std::vector<Edge<T, W>> && vector): ar
     }
 }
 
-template <typename T,typename W>
-unsigned int AdjacencyList<T,W>::nodes() const {
+template <typename W>
+unsigned int AdjacencyList<W>::nodes() const {
     return array.size();
 }
 
-template <typename T,typename W>
-unsigned int AdjacencyList<T,W>::edges() const {
+template <typename W>
+unsigned int AdjacencyList<W>::edges() const {
     unsigned int cost = 0;
     for(const auto & i : array){
         cost += i.size();
@@ -97,8 +99,8 @@ unsigned int AdjacencyList<T,W>::edges() const {
 }
 
 
-template<typename T, typename W>
-int AdjacencyList<T, W>::totalCost() const {
+template<typename W>
+int AdjacencyList<W>::totalCost() const {
     int cost = 0;
     for(const auto & i : array){
         for(const auto & j : i){
@@ -108,8 +110,8 @@ int AdjacencyList<T, W>::totalCost() const {
     return cost / 2;
 }
 
-template<typename T, typename W>
-void AdjacencyList<T, W>::add(Edge<T,W> ed){
+template<typename W>
+void AdjacencyList<W>::add(Edge<W> ed){
     array[ed.get_node_1()].push_back(std::make_pair(ed.get_node_2(), ed.get_weight()));
     array[ed.get_node_2()].push_back(std::make_pair(ed.get_node_1(), ed.get_weight()));
 }
@@ -118,8 +120,8 @@ void AdjacencyList<T, W>::add(Edge<T,W> ed){
  * Return the minimum weight W of the edge between n1 and n2
  * otherwise return INT_MAX
  */
-template<typename T, typename W>
-W AdjacencyList<T, W>::isAdjacent(T n1, T n2) const {
+template<typename W>
+W AdjacencyList<W>::isAdjacent(int n1, int n2) const {
     W min_weight = INT_MAX;
     for(const auto & pair : array[n1]){
         if(pair.first == n2 && pair.second < min_weight) {
@@ -131,8 +133,8 @@ W AdjacencyList<T, W>::isAdjacent(T n1, T n2) const {
 
 /* Multigraph matrix contains weight of minimum edges between vertices
  */
-template<typename T, typename W>
-void AdjacencyList<T, W>::matrixView() const {
+template<typename W>
+void AdjacencyList<W>::matrixView() const {
     for(int i = 0; i < array.size(); ++i){
         for(int j = 0; j < array.size(); ++j){
             W mom = isAdjacent(i,j);
@@ -148,8 +150,8 @@ void AdjacencyList<T, W>::matrixView() const {
 
 
 //Multigraph matrix contains weight of minimum edges between vertices
-template<typename T, typename W>
-std::vector<std::vector<W>> AdjacencyList<T, W>::asMatrix() const {
+template<typename W>
+std::vector<std::vector<W>> AdjacencyList<W>::asMatrix() const {
     std::vector<std::vector<W>> matrix(array.size(), std::vector<W>());
     for(int i = 0; i < array.size(); ++i){
         for(int j = 0; j < array.size(); ++j){
@@ -169,8 +171,8 @@ std::vector<std::vector<W>> AdjacencyList<T, W>::asMatrix() const {
  *
  * Return True if it exists a path between v and w, False otherwise.
  */
-template<typename T, typename W>
-bool AdjacencyList<T, W>::DFS(T v, T w) const {
+template<typename W>
+bool AdjacencyList<W>::DFS(int v, int w) const {
     bool L[array.size()] = {0};
     L[v] = true; //preemptively set that the node v has been visited, to skip next call of DFS_inside(v,...)
     for(int i=0; i < array[v].size(); ++i){ //cycle all adjacent node of v
@@ -188,7 +190,7 @@ bool AdjacencyList<T, W>::DFS(T v, T w) const {
 }
 
 template<typename U>
-std::ostream& operator<<(std::ostream& os, const AdjacencyList<U,U>& ad){
+std::ostream& operator<<(std::ostream& os, const AdjacencyList<U>& ad){
     os << "Number of nodes   : " << ad.nodes() << std::endl;
     os << "Number of edges   : " << ad.edges() << std::endl;
     os << "Cost of all edges : " << ad.totalCost() << std::endl;
@@ -202,9 +204,20 @@ std::ostream& operator<<(std::ostream& os, const AdjacencyList<U,U>& ad){
     return os;
 }
 
-template<typename T, typename W>
-bool AdjacencyList<T,W>::operator==(const AdjacencyList<T,W>& ad){
+template<typename W>
+void AdjacencyList<W>::order_array() {
+    for(const auto & row : array){
+        std::sort(row.begin(), row.end());
+    }
+}
+
+template<typename W>
+bool AdjacencyList<W>::operator==(const AdjacencyList<W>& ad) const {
     return array == ad.array;
 }
 
+template<typename W>
+std::vector<std::pair<int, W>>& AdjacencyList<W>::operator[](int i) const {
+    return array[i];
+}
 #endif //ALGADVGRAPHS_ADJACENCYLIST_H
