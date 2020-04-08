@@ -77,7 +77,7 @@ void MinHeap::min_heapify(){
 }
 
 /*public methods*/
-MinHeap::MinHeap(const std::vector<std::pair<int, int>>& cpy): array(cpy), track(new unsigned int[cpy.size()]){
+MinHeap::MinHeap(const std::vector<std::pair<int, int>>& cpy): array(cpy), track(new int[cpy.size()]){
     for(int i = 0; i < cpy.size(); ++i){
         track[i] = i;
     }

@@ -31,7 +31,7 @@ public:
     friend std::ostream& operator<<(std::ostream &os, const AdjacencyList<U>& ad);
     void order_array();
     bool operator==(const AdjacencyList<W> &ad) const;
-    std::vector< std::pair<int,W> >& operator[](int i) const;
+    std::vector< std::pair<int,W> > operator[](int i) const;
 };
 
 /*private methods*/
@@ -206,8 +206,8 @@ std::ostream& operator<<(std::ostream& os, const AdjacencyList<U>& ad){
 
 template<typename W>
 void AdjacencyList<W>::order_array() {
-    for(const auto & row : array){
-        std::sort(row.begin(), row.end());
+    for(int i=0; i < array.size(); ++i){
+        std::sort(array[i].begin(), array[i].end());
     }
 }
 
@@ -217,7 +217,7 @@ bool AdjacencyList<W>::operator==(const AdjacencyList<W>& ad) const {
 }
 
 template<typename W>
-std::vector<std::pair<int, W>>& AdjacencyList<W>::operator[](int i) const {
+std::vector<std::pair<int, W>> AdjacencyList<W>::operator[](int i) const {
     return array[i];
 }
 #endif //ALGADVGRAPHS_ADJACENCYLIST_H

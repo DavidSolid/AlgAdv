@@ -104,7 +104,7 @@ int main() {
 
         //Parse file .txt into graph G
         Parser myParser = Parser();
-        std::vector<std::vector<int>> G = myParser.parse("..\\dataset\\input_random_68_100000.txt");
+        std::vector<std::vector<int>> G = myParser.parse("..\\dataset\\input_random_29_800.txt");
         //G[0][0] = NUMBER OF NODES
         //G[0][1] = NUMBER OF EDGES
         for(int i = 1; i <= G[0][1]; ++i){
@@ -140,7 +140,6 @@ int main() {
         A_Kruskal_Union_Find.order_array();
         bool test_equal = A_Kruskal_Naive == A_Kruskal_Union_Find;
         std::cout << "Did we get the same MST? " << test_equal << std::endl;
-
 
         /*
         std::vector<std::vector<int>> matrix = A_Kruskal_Naive.asMatrix();
