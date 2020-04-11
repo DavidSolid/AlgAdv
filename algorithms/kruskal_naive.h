@@ -23,16 +23,18 @@ std::pair<int, AdjacencyList<W>> Kruskal_Naive(unsigned int n_vec, std::vector<E
     std::sort(E.begin(), E.end());
 
     //line 3 : for each edge in E do
-    for(const auto & e : E){
+    for(int i = 0; i< E.size(); ++i){
         ++iter;
         //line 4 : if in A it does not exist a cycle between e.node_1 and e.node_2 then
-        if(!A.DFS(e.get_node_1(), e.get_node_2())){
+        if(!A.DFS(E[i].get_node_1(), E[i].get_node_2())){
+
             //line 5 : add e to A
-            A.add(e);
+            A.add(E[i]);
+
+            //if A contains n-1 edges then it must be a MST
+            if(A.edges() == (A.nodes() - 1))
+                break;
         }
-        //if A contains n-1 edges then it must be a MST
-        if(A.edges() == (A.nodes() - 1))
-            break;
     }
 
     //line 6 : return A and the number of iteration

@@ -87,7 +87,7 @@ W Edge<W>::get_weight() const {
 
 template<typename U>
 std::ostream& operator<<(std::ostream& os, const Edge<U>& ed){
-    os << ed.get_node_1()+1 << ' ' << ed.get_node_2()+1 << ' ' << ed.get_weight()+1;
+    os << ed.get_node_1()+1 << ' ' << ed.get_node_2()+1 << ' ' << ed.get_weight();
     return os;
 }
 

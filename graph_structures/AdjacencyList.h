@@ -173,6 +173,9 @@ std::vector<std::vector<W>> AdjacencyList<W>::asMatrix() const {
  */
 template<typename W>
 bool AdjacencyList<W>::DFS(int v, int w) const {
+    if(v == w){
+        return true;
+    }
     bool L[array.size()] = {0};
     L[v] = true; //preemptively set that the node v has been visited, to skip next call of DFS_inside(v,...)
     for(int i=0; i < array[v].size(); ++i){ //cycle all adjacent node of v
