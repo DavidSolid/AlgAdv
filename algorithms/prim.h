@@ -8,6 +8,7 @@
 #include "../graph_structures/Edge.h"
 #include "../graph_structures/AdjacencyList.h"
 #include "../data_structures/MinHeap.h"
+#include <climits>
 
 template <typename W>
 std::pair<int, AdjacencyList<W>> Prim(unsigned int, AdjacencyList<W>);

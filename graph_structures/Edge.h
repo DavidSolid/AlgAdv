@@ -6,7 +6,6 @@
 #define ALGADVGRAPHS_EDGE_H
 
 #include <vector>
-#include <iostream>
 
 template <typename W>
 class Edge {
@@ -23,8 +22,6 @@ public:
     [[nodiscard]] int get_node_2() const;
     W get_weight() const;
     bool operator<(const Edge<W> &ed);
-    template <typename U>
-    friend std::ostream& operator<<(std::ostream &os, const Edge<U>& ed);
     template <typename U>
     friend bool operator<(const Edge<U>& ed_1, const Edge<U>& ed_2);
 };
@@ -83,12 +80,6 @@ int Edge<W>::get_node_2() const {
 template<typename W>
 W Edge<W>::get_weight() const {
     return weight;
-}
-
-template<typename U>
-std::ostream& operator<<(std::ostream& os, const Edge<U>& ed){
-    os << ed.get_node_1()+1 << ' ' << ed.get_node_2()+1 << ' ' << ed.get_weight();
-    return os;
 }
 
 template<typename U>

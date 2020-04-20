@@ -32,7 +32,7 @@ std::pair<int, AdjacencyList<W>> Kruskal_Naive(unsigned int n_vec, std::vector<E
             A.add(E[i]);
 
             //if A contains n-1 edges then it must be a MST
-            if(A.edges() == (A.nodes() - 1))
+            if(A.get_edges() == (A.get_nodes() - 1))
                 break;
         }
     }

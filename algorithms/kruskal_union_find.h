@@ -40,7 +40,7 @@ std::pair<int, AdjacencyList<W>> Kruskal_Union_Find(unsigned int n_vec, std::vec
             U.unite(e.get_node_1(), e.get_node_2());
         }
         //if A contains n-1 edges then it must be a MST
-        if(A.edges() == (A.nodes() - 1))
+        if(A.get_edges() == (A.get_nodes() - 1))
             break;
     }
 
