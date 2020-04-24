@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <utility>
+#include <queue>
 
 template <typename W>
 class AdjacencyList {
@@ -23,6 +24,7 @@ public:
     [[nodiscard]] W total_weight() const;
     void add(Edge<W> ed);
     [[nodiscard]] bool DFS(int v,int w)const;
+    [[nodiscard]] bool BFS(int v,int w)const;
     std::vector< std::pair<int,W> > operator[](int i) const;
 };
 
@@ -130,8 +132,40 @@ bool AdjacencyList<W>::DFS(int v, int w) const {
     return false; // we have searched all nodes, and a path between v and w does not exist
 }
 
+/* BFS iterative implementation:
+ * Find if two nodes: v,w (whom we represent with their integer id) are connected.
+ *
+ * Return True if it exists a path between v and w, False otherwise.
+ */
+template<typename W>
+bool AdjacencyList<W>::BFS(int v, int w) const {
+    if(v == w){
+        return true;
+    }
+    bool L[array.size()] = {0};
+    std::queue<int> q;
+    q.push(v);
+    while(!q.empty()){
+        int current = q.front();
+        L[current] = true;
+        q.pop();
+        for(int i=0; i < array[current].size(); ++i) { //cycle all adjacent node of current
+            if(L[array[current][i].first] == 0){
+                if(array[current][i].first == w){ // if the adjacent node is the searched node w then v and w are connected
+                    return true;
+                }else{
+                    L[array[current][i].first] = true;
+                    q.push(array[current][i].first);
+                }
+            }
+        }
+    }
+    return false; // we have searched all nodes, and a path between v and w does not exist
+}
+
 template<typename W>
 std::vector<std::pair<int, W>> AdjacencyList<W>::operator[](int i) const {
     return array[i];
 }
+
 #endif //ALGADVGRAPHS_ADJACENCYLIST_H

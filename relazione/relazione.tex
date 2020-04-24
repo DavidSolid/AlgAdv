@@ -1,0 +1,246 @@
+\documentclass[]{article}
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    frame=single
+}
+
+% Title Page
+\title{Homework1, Algoritmi su Grafi}
+\author{Enrico Cancelli, Alessandro Pegoraro}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+	Una breve relazione sullo svolgimento del progetto. La relazione deve contenere:
+	\begin{itemize}
+		\item una sezione introduttiva con la descrizione degli algoritmi e delle scelte implementative che avete fatto;
+		\item grafici esplicativi dei risultati con le risposte alle due domande;
+		\item eventuali originalità introdotte nell'elaborato o nell'implementazione;
+		\item una sezione conclusiva in cui porre i vostri commenti e le vostre conclusioni sull'elaborato svolto e i risultati ottenuti
+	\end{itemize}
+	\textit{/*da eliminare*/}
+\end{abstract}
+
+\section{Introduzione}
+Lo scopo di questo progetto è l'implementazione e l'analisi di 3 algoritmi di ricerca per il \textit{Minimum Spanning Tree} (in seguito solo MST) di un grafo pesato e non diretto.\\
+Questi algoritmi sono:
+\begin{itemize}
+	\item: Algoritmo di Prim: [...] 
+	\item: Algoritmo di Kruskal (implementazione naive): [...]
+	\item: Algoritmo di Kruskal con struttura dati \textit{Union-Find}: [...]
+\end{itemize}
+Nelle successive sezioni descriveremo in dettaglio l'implementazione di questi algoritmi e delle relative strutture dati di supporto e li testeremo su un dataset generato randomicamente, analizzando i risultati ottenuti e le performance in termini di tempo d'esecuzione e spazio allocato in memoria.\\
+I test saranno condotti su grafi non necessariamente semplici (quindi con la possibile presenza di \textit{self loops} e archi multipli tra due nodi) e con pesi non necessariamente positivi.\\
+Abbiamo scelto di implementare tali algoritmi utilizzando il linguaggio \textit{C++17} per motivi di efficienza e per potere, allo stesso tempo, utilizzare astrazioni tipiche dei linguaggi ad oggetti rendendo il codice prodotto più modulare.
+\section{Implementazione}
+In questa sezione verranno esposte e adeguatamente motivate le scelte implementative adottate durante lo sviluppo. L'intero progetto è stato realizzato facendo il più possibile uso di codice generico (template di classe per le strutture dati di supporto e template di funzione per gli algoritmi).\\
+Infine verrà data una spiegazione dettagliata sulla struttura del codice realizzato ed eventuali note per la compilazione.
+\subsection{Parser}
+\subsection{Strutture dati}
+\subsubsection{MinHeap}
+\subsubsection{Union-Find}
+\subsection{Strutture per la rappresentazione di grafi}
+\subsubsection{Adjacency List}
+\subsection{Algoritmi}
+\subsubsection{Prim}
+\newpage
+\subsubsection{Naive Kruskal}
+\begin{flushleft}
+Come riferimento per l'implementazione dell'algoritmo è stato preso il seguente pseudo codice spiegato a lezione:
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\DontPrintSemicolon
+\KwIn{Graph G}
+\KwResult{Graph of a MST}
+	A = Ø\;
+	sort edges of G by cost\;
+	\For{each edge e, in nondecreasing order of cost}{
+		\If{A $\cup$ {e} is acyclic}{
+			A = A $\cup$ {e}\;
+		}
+	}
+	return A\;
+\caption{Kruskal Naive}
+\end{algorithm}
+La nostra implementazione presente nel file \verb|algorithms\kruskal_naive.h| è la seguente:
+
+\lstset{language=c++, style=mystyle}
+\lstinputlisting[language=c++]{k_naive.cpp}
+
+\textbf{Note implementative:}
+
+\medskip
+Per l'ordinamento della lista di lati:
+
+\lstset{language=c++, style=mystyle,backgroundcolor=\color{white}, firstnumber=2}  	 	
+\begin{lstlisting}
+sort edges of G by cost
+\end{lstlisting}
+
+\smallskip
+si è utilizzata la funzione \verb|std::sort()| che assicura l'ordinamento in tempo O(non mi ricordo scrivi tu Enrico ammortizzato)%%TODO 
+ è stato necessario ridefinire l'operatore booleano di minimo nell'oggetto EDGE
+ 
+\lstset{language=c++, style=mystyle, firstnumber=2} 	 	
+\begin{lstlisting}
+std::sort(E.begin(), E.end());
+\end{lstlisting}
+
+\medskip
+Per il controllo dell'aciclicità nel caso di aggiunta di un nuovo lato:
+
+\lstset{language=c++, style=mystyle,backgroundcolor=\color{white}, firstnumber=4}  	 	
+\begin{lstlisting}
+if A U {e} is acyclic then
+\end{lstlisting}
+
+\smallskip
+sono stati implementati sia l'algoritmo ricorsivo DFS che l'algoritmo iterativo BFS, queste due funzioni sono state ottimizzate in modo tale che ritornino TRUE solo se esiste un cammino tra i nodi adiacenti al lato che stiamo analizzando.
+
+Se ritornano FALSE allora possiamo aggiungere il nuovo lato alla lista di adiacenza con la certezza che non verrà a formarsi un ciclo.
+
+\lstset{language=c++, style=mystyle, firstnumber=4}
+\begin{lstlisting}
+if(!A.DFS(E[i].get_node_1(), E[i].get_node_2()))
+\end{lstlisting}
+
+\medskip
+Inoltre si è ottimizato l'agoritmo con un controllo addizionale per far terminare anticipatamente l'iterazione. 
+
+Viene controllato che il numero di lati non sia mai maggiore o uguale al numero di nodi del grafo.
+
+\lstset{language=c++, style=mystyle, firstnumber=6}
+\begin{lstlisting}
+if(A.get_edges() == (A.get_nodes() - 1))
+    break;
+\end{lstlisting}
+\end{flushleft}
+\subsubsection{Kruskal (con Union-Find)}
+\begin{flushleft}
+Come riferimento per l'implementazione dell'algoritmo è stato preso il seguente pseudo codice spiegato a lezione:
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\DontPrintSemicolon
+\KwIn{Graph G}
+\KwResult{Graph of a MST}
+	A = Ø\;
+	U = initialize(V)\;
+	sort edges of E by cost\;
+	\For{each edge e=(v,w), in nondecreasing order of cost}{
+		\If{Find(U,v) $\neq$ Find(U,w)}{
+			A = A $\cup$ {(v,w)}\;
+			Union(U,v,w)
+		}
+	}
+	return A\;
+\caption{Kruskal Naive}
+\end{algorithm}
+La nostra implementazione presente nel file \verb|algorithms\kruskal_union_find.h| è la seguente:
+
+\lstset{language=c++, style=mystyle}
+\lstinputlisting[language=c++]{k_union.cpp}
+
+\textbf{Note implementative:}
+
+\medskip
+Per l'inizializzazione della struttura Union-Find:
+
+\lstset{language=c++, style=mystyle,backgroundcolor=\color{white}, firstnumber=2}  	 	
+\begin{lstlisting}
+U = initialize(V)
+\end{lstlisting}
+
+\smallskip
+al costruttore è passato un vettore di interi con valori distinti per far si che inizialmente tutti i nodi appartengano a componenti connesse distinte.
+
+\lstset{language=c++, style=mystyle, firstnumber=4}  	 	
+\begin{lstlisting}
+int *V;
+V = new int[n_vec];
+std::iota(V, V + n, 0);
+UnionFind U(V, n_vec);
+\end{lstlisting}
+
+\medskip
+Per l'ordinamento della lista di lati:
+
+\lstset{language=c++, style=mystyle,backgroundcolor=\color{white}, firstnumber=2}  	 	
+\begin{lstlisting}
+sort edges of G by cost
+\end{lstlisting}
+
+\smallskip
+si è utilizzata la funzione \verb|std::sort()| che assicura l'ordinamento in tempo O(non mi ricordo scrivi tu Enrico ammortizzato)%%TODO 
+ è stato necessario ridefinire l'operatore booleano di minimo nell'oggetto EDGE
+ 
+\lstset{language=c++, style=mystyle, firstnumber=2} 	 	
+\begin{lstlisting}
+std::sort(E.begin(), E.end());
+\end{lstlisting}
+
+\medskip
+Per controllare se due nodi appartengono alla stessa componente connessa e per unire le componenti connesse
+\lstset{language=c++, style=mystyle,backgroundcolor=\color{white}, firstnumber=2}  	 	
+\begin{lstlisting}
+if Find(U,v) =/= Find(U,w) then
+	A = A U (v,w)
+	Union(U,v,w)
+\end{lstlisting}
+
+\smallskip
+sono state implementate le funzioni \verb|U.find()| e \verb|U.unite|.
+
+\lstset{language=c++, style=mystyle, firstnumber=2} 	 	
+\begin{lstlisting}
+if (U.find(e.get_node_1()) != U.find(e.get_node_2())) {
+	A.add(e);
+    U.unite(e.get_node_1(), e.get_node_2());
+}
+\end{lstlisting}
+
+\medskip
+Inoltre si è ottimizato l'agoritmo con un controllo addizionale per far terminare anticipatamente l'iterazione. 
+
+Viene controllato che il numero di lati non sia mai maggiore o uguale al numero di nodi del grafo.
+
+\lstset{language=c++, style=mystyle, firstnumber=6}
+\begin{lstlisting}
+if(A.get_edges() == (A.get_nodes() - 1))
+    break;
+\end{lstlisting}
+\end{flushleft}
+\subsection{Note su compilazione e struttura del codice}
+\textit{/*forse spostare in sezione a parte?*/}
+\section{Testing e analisi sperimentali}
+\subsection{Risultati prodotti}
+[...]
+\section{Conclusioni}
+\end{document}          

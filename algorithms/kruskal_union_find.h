@@ -9,21 +9,21 @@
 #include "../graph_structures/AdjacencyList.h"
 
 template <typename W>
-std::pair<int, AdjacencyList<W>> Kruskal_Union_Find(unsigned int, std::vector<Edge<W>>);
+std::pair<int, AdjacencyList<W>> Kruskal_Union_Find(int, std::vector<Edge<W>>);
 
 template <typename W>
-std::pair<int, AdjacencyList<W>> Kruskal_Union_Find(unsigned int n_vec, std::vector<Edge<W>> E){
+std::pair<int, AdjacencyList<W>> Kruskal_Union_Find(int n, std::vector<Edge<W>> E){
     //number of iteration of the outer for
     int iter = 0;
 
     //line 1 : Initialize A empty
-    AdjacencyList<int> A(n_vec);
+    AdjacencyList<W> A(n);
 
     //line 2 : Initialize U with V
     int *V;
-    V = new int[n_vec];
-    std::iota(V, V + n_vec, 0);
-    UnionFind U(V, n_vec);
+    V = new int[n];
+    std::iota(V, V + n, 0);
+    UnionFind U(V, n);
     //todo: passare un anonimo in futuro
 
     //line 3 : sort E
