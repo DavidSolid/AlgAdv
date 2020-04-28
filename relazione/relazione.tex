@@ -62,6 +62,31 @@ Come riferimento per l'implementazione degli algoritmi è stato preso il seguent
 	\SetAlgoLined
 	\DontPrintSemicolon
 	\KwIn{Graph G}
+	\KwIn{vertex s}
+	\KwResult{Graph of a MST}
+	\For{each u $\in$ V}{
+		key[u] $\gets$ +$\infty$\;
+		$\pi$[u] $\gets$ NULL\;
+	}
+	key[s] $\gets$ 0\;
+	Q $\gets$ V\;
+	\While{Q $\neq$ Ø}{
+		u $\gets$ extractMin(Q)\;
+		\For{each v adjacent to u}{
+			\If{v $\in$ Q and w(u,v) < key[v]}{
+				$\pi$[v] $\gets$ u\;
+				key[v] $\gets$ w(u,v)\;
+			}
+		}
+	}
+	return A\;
+	\caption{Prim}
+\end{algorithm}
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\DontPrintSemicolon
+	\KwIn{Graph G}
 	\KwResult{Graph of a MST}
 	A = Ø\;
 	sort edges of G by cost\;
