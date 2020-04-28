@@ -1,4 +1,5 @@
 \documentclass[]{article}
+\usepackage[a4paper, total={6in, 10.5in}]{geometry}
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 \usepackage{listings}
 \usepackage{xcolor}
@@ -51,10 +52,46 @@
 Lo scopo di questo progetto è l'implementazione e l'analisi di 3 algoritmi di ricerca per il \textit{Minimum Spanning Tree} (in seguito solo MST) di un grafo pesato e non diretto.\\
 Questi algoritmi sono:
 \begin{itemize}
-	\item: Algoritmo di Prim: [...] 
-	\item: Algoritmo di Kruskal (implementazione naive): [...]
-	\item: Algoritmo di Kruskal con struttura dati \textit{Union-Find}: [...]
+	\item Algoritmo di Prim
+	\item Algoritmo di Kruskal (implementazione naive)
+	\item Algoritmo di Kruskal con struttura dati \textit{Union-Find}
 \end{itemize}
+\subsection{Pseudocodice}
+Come riferimento per l'implementazione degli algoritmi è stato preso il seguente pseudo codice spiegato a lezione:\\
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\DontPrintSemicolon
+	\KwIn{Graph G}
+	\KwResult{Graph of a MST}
+	A = Ø\;
+	sort edges of G by cost\;
+	\For{each edge e, in nondecreasing order of cost}{
+		\If{A $\cup$ {e} is acyclic}{
+			A = A $\cup$ {e}\;
+		}
+	}
+	return A\;
+	\caption{Kruskal Naive}
+\end{algorithm}
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\DontPrintSemicolon
+	\KwIn{Graph G}
+	\KwResult{Graph of a MST}
+	A = Ø\;
+	U = initialize(V)\;
+	sort edges of E by cost\;
+	\For{each edge e=(v,w), in nondecreasing order of cost}{
+		\If{Find(U,v) $\neq$ Find(U,w)}{
+			A = A $\cup$ {(v,w)}\;
+			Union(U,v,w)
+		}
+	}
+	return A\;
+	\caption{Kruskal con Union-Find}
+\end{algorithm}
+\subsection{Struttura del progetto}
 Nelle successive sezioni descriveremo in dettaglio l'implementazione di questi algoritmi e delle relative strutture dati di supporto e li testeremo su un dataset generato randomicamente, analizzando i risultati ottenuti e le performance in termini di tempo d'esecuzione e spazio allocato in memoria.\\
 I test saranno condotti su grafi non necessariamente semplici (quindi con la possibile presenza di \textit{self loops} e archi multipli tra due nodi) e con pesi non necessariamente positivi.\\
 Abbiamo scelto di implementare tali algoritmi utilizzando il linguaggio \textit{C++17} per motivi di efficienza e per potere, allo stesso tempo, utilizzare astrazioni tipiche dei linguaggi ad oggetti rendendo il codice prodotto più modulare.
@@ -72,23 +109,6 @@ Infine verrà data una spiegazione dettagliata sulla struttura del codice realiz
 \newpage
 \subsubsection{Naive Kruskal}
 \begin{flushleft}
-Come riferimento per l'implementazione dell'algoritmo è stato preso il seguente pseudo codice spiegato a lezione:
-
-\begin{algorithm}[H]
-\SetAlgoLined
-\DontPrintSemicolon
-\KwIn{Graph G}
-\KwResult{Graph of a MST}
-	A = Ø\;
-	sort edges of G by cost\;
-	\For{each edge e, in nondecreasing order of cost}{
-		\If{A $\cup$ {e} is acyclic}{
-			A = A $\cup$ {e}\;
-		}
-	}
-	return A\;
-\caption{Kruskal Naive}
-\end{algorithm}
 La nostra implementazione presente nel file \verb|algorithms\kruskal_naive.h| è la seguente:
 
 \lstset{language=c++, style=mystyle}
@@ -144,25 +164,6 @@ if(A.get_edges() == (A.get_nodes() - 1))
 \end{flushleft}
 \subsubsection{Kruskal (con Union-Find)}
 \begin{flushleft}
-Come riferimento per l'implementazione dell'algoritmo è stato preso il seguente pseudo codice spiegato a lezione:
-
-\begin{algorithm}[H]
-\SetAlgoLined
-\DontPrintSemicolon
-\KwIn{Graph G}
-\KwResult{Graph of a MST}
-	A = Ø\;
-	U = initialize(V)\;
-	sort edges of E by cost\;
-	\For{each edge e=(v,w), in nondecreasing order of cost}{
-		\If{Find(U,v) $\neq$ Find(U,w)}{
-			A = A $\cup$ {(v,w)}\;
-			Union(U,v,w)
-		}
-	}
-	return A\;
-\caption{Kruskal Naive}
-\end{algorithm}
 La nostra implementazione presente nel file \verb|algorithms\kruskal_union_find.h| è la seguente:
 
 \lstset{language=c++, style=mystyle}
