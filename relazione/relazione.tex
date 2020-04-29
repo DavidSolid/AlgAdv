@@ -73,7 +73,7 @@ Come riferimento per l'implementazione degli algoritmi è stato preso il seguent
 	\While{Q $\neq$ Ø}{
 		u $\gets$ extractMin(Q)\;
 		\For{each v adjacent to u}{
-			\If{v $\in$ Q and w(u,v) < key[v]}{
+			\If{v $\in$ Q and w(u,v) $<$ key[v]}{
 				$\pi$[v] $\gets$ u\;
 				key[v] $\gets$ w(u,v)\;
 			}
@@ -128,7 +128,23 @@ Infine verrà data una spiegazione dettagliata sulla struttura del codice realiz
 \subsubsection{MinHeap}
 \subsubsection{Union-Find}
 \subsection{Strutture per la rappresentazione di grafi}
+\subsubsection{Edge}
+Per rappresentare un lato composto dai  suoi due nodi adiacenti e il peso associato abbiamo creato la classe templetizzata \textbf{Edge$<$W$>$}, con
+%TODO tipo del peso non mi piace troppo
+\textbf{W} tipo del peso.\\
+Nella classe abbiamo ridefinito l'operatore di relazione \textbf{$<$} in modo tale che confronti il peso tra due lati, dato che rappresentiamo l'insieme di lati del grafo \textbf{E} utilizzando un \verb|std::vector|$<$\textbf{Edge}$>$ per poter ordinare i lati in ordine crescente facendo uso della funzione \verb|std::sort()| che prende in input le posizioni estreme del vettore e utilizza l'operatore \textbf{$<$} per l'ordinamento.
 \subsubsection{Adjacency List}
+Per rappresentare il grafo abbiamo utilizzato una lista di adiacenza implementata dalla classe \textbf{AdjacencyList$<$W$>$}, con \textbf{W} tipo del peso dei lati.\\
+La classe è composta da un \verb|std::vector| in cui ogni indice rappresenta un nodo, e ogni elemento è un \verb|std::vector| di coppie \verb|std::pair| nel quale il primo membro è a sua volta un intero che rappresenta un nodo adiacente all'indice, mentre il secondo elemento è il peso associato al lato che collega i due nodi.\\
+Nella classe abbiamo implementato \verb|total_weight()| per ottenere il peso totale del grafo, \verb|get_nodes()| e \verb|get_edges()| che ritornano il numero di nodi e di lati.\\
+Per verificare se due nodi sono connessi nel grafo abbiamo implementato la funzione ricorsiva \verb|DFS(int v,int w)|:
+\lstset{language=c++, style=mystyle}
+\lstinputlisting[language=c++]{DFS.cpp}
+La quale internamente chiama la funzione privata \verb|DFS_inside(int v, int w, bool L[])| la cui implementazione è la stessa di \verb|DFS| con l'unica differenza che il vettore \verb|L| non è creato ma ricevuto da \verb|DFS|.\\
+In \verb|L| ogni indice rappresenta un nodo e ogni elemento indica se quel nodo è stato già visitato durante la ricerca.\\
+Abbiamo implementato anche la funzione \verb|BFS(int v,int w)| in forma iterativa per confrontare la velocità tra i due algoritmi in \textbf{Kruskal naive}:
+\lstset{language=c++, style=mystyle}
+\lstinputlisting[language=c++]{BFS.cpp}
 \subsection{Algoritmi}
 \subsubsection{Prim}
 \newpage
@@ -153,7 +169,7 @@ sort edges of G by cost
 si è utilizzata la funzione \verb|std::sort()| che assicura l'ordinamento in tempo O(non mi ricordo scrivi tu Enrico ammortizzato)%%TODO 
  è stato necessario ridefinire l'operatore booleano di minimo nell'oggetto EDGE
  
-\lstset{language=c++, style=mystyle, firstnumber=2} 	 	
+\lstset{language=c++, style=mystyle, firstnumber=3} 	 	
 \begin{lstlisting}
 std::sort(E.begin(), E.end());
 \end{lstlisting}
@@ -171,7 +187,7 @@ sono stati implementati sia l'algoritmo ricorsivo DFS che l'algoritmo iterativo 
 
 Se ritornano FALSE allora possiamo aggiungere il nuovo lato alla lista di adiacenza con la certezza che non verrà a formarsi un ciclo.
 
-\lstset{language=c++, style=mystyle, firstnumber=4}
+\lstset{language=c++, style=mystyle, firstnumber=5}
 \begin{lstlisting}
 if(!A.DFS(E[i].get_node_1(), E[i].get_node_2()))
 \end{lstlisting}
@@ -181,7 +197,7 @@ Inoltre si è ottimizato l'agoritmo con un controllo addizionale per far termina
 
 Viene controllato che il numero di lati non sia mai maggiore o uguale al numero di nodi del grafo.
 
-\lstset{language=c++, style=mystyle, firstnumber=6}
+\lstset{language=c++, style=mystyle, firstnumber=7}
 \begin{lstlisting}
 if(A.get_edges() == (A.get_nodes() - 1))
     break;
@@ -207,7 +223,7 @@ U = initialize(V)
 \smallskip
 al costruttore è passato un vettore di interi con valori distinti per far si che inizialmente tutti i nodi appartengano a componenti connesse distinte.
 
-\lstset{language=c++, style=mystyle, firstnumber=4}  	 	
+\lstset{language=c++, style=mystyle, firstnumber=3}  	 	
 \begin{lstlisting}
 int *V;
 V = new int[n_vec];
@@ -227,7 +243,7 @@ sort edges of G by cost
 si è utilizzata la funzione \verb|std::sort()| che assicura l'ordinamento in tempo O(non mi ricordo scrivi tu Enrico ammortizzato)%%TODO 
  è stato necessario ridefinire l'operatore booleano di minimo nell'oggetto EDGE
  
-\lstset{language=c++, style=mystyle, firstnumber=2} 	 	
+\lstset{language=c++, style=mystyle, firstnumber=7} 	 	
 \begin{lstlisting}
 std::sort(E.begin(), E.end());
 \end{lstlisting}
@@ -244,7 +260,7 @@ if Find(U,v) =/= Find(U,w) then
 \smallskip
 sono state implementate le funzioni \verb|U.find()| e \verb|U.unite|.
 
-\lstset{language=c++, style=mystyle, firstnumber=2} 	 	
+\lstset{language=c++, style=mystyle, firstnumber=9} 	 	
 \begin{lstlisting}
 if (U.find(e.get_node_1()) != U.find(e.get_node_2())) {
 	A.add(e);
@@ -257,7 +273,7 @@ Inoltre si è ottimizato l'agoritmo con un controllo addizionale per far termina
 
 Viene controllato che il numero di lati non sia mai maggiore o uguale al numero di nodi del grafo.
 
-\lstset{language=c++, style=mystyle, firstnumber=6}
+\lstset{language=c++, style=mystyle, firstnumber=13}
 \begin{lstlisting}
 if(A.get_edges() == (A.get_nodes() - 1))
     break;
