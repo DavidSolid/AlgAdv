@@ -124,6 +124,15 @@ Abbiamo scelto di implementare tali algoritmi utilizzando il linguaggio \textit{
 In questa sezione verranno esposte e adeguatamente motivate le scelte implementative adottate durante lo sviluppo. L'intero progetto è stato realizzato facendo il più possibile uso di codice generico (template di classe per le strutture dati di supporto e template di funzione per gli algoritmi).\\
 Infine verrà data una spiegazione dettagliata sulla struttura del codice realizzato ed eventuali note per la compilazione.
 \subsection{Parser}
+Considerando che il formato dei grafi di esempio è standardizzato nel seguente modo:
+\begin{verbatim}
+[numero_di_vertici] [numero_di_archi] 
+[un_vertice_arco_1] [altro_vertice_arco_1] [peso_arco_1] 
+[un_vertice_arco_2] [altro_vertice_arco_2] [peso_arco_2] 
+...
+\end{verbatim}
+Abbiamo implementato una classe \textbf{Parser} che permette di tradurre solo i file nel formato descritto.\\
+Dato che utilizziamo i nodi come indici nelle strutture dati e nei file di esempio i vertici cominciano dall'intero 1, all'interno delle funzioni di parse diminuiamo tutti i nodi di un unità in modo da non sprecare l'indice 0, ciò comunque non porta alcuna differenza alle relazioni tra i nodi e al risultato finale.
 \subsection{Strutture dati}
 \subsubsection{MinHeap}
 \subsubsection{Union-Find}

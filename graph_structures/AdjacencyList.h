@@ -150,12 +150,12 @@ bool AdjacencyList<W>::BFS(int v, int w) const {
         L[current] = true;
         q.pop();
         for(int i=0; i < array[current].size(); ++i) { //cycle all adjacent node of current
-            if(L[array[current][i].first] == 0){
-                if(array[current][i].first == w){ // if the adjacent node is the searched node w then v and w are connected
+            if(L[array[current][i].first] == 0){ //if we have not already checked this particular adjacent node
+                if(array[current][i].first == w){ //if the adjacent node is the searched node w then v and w are connected
                     return true;
                 }else{
-                    L[array[current][i].first] = true;
-                    q.push(array[current][i].first);
+                    L[array[current][i].first] = true; //mark the adjacent node as checked
+                    q.push(array[current][i].first);  //add the adjacent node to the queue for further checks
                 }
             }
         }
