@@ -11,10 +11,11 @@
 #include <climits>
 
 template <typename W>
-std::pair<int, AdjacencyList<W>> Prim(unsigned int, AdjacencyList<W>);
+AdjacencyList<W> Prim(AdjacencyList<W>);
 
 template <typename W>
-std::pair<int, AdjacencyList<W>> Prim(unsigned int n_vec, AdjacencyList<W> A){
+AdjacencyList<W> Prim(AdjacencyList<W> A){
+    unsigned int n_vec = A.get_nodes();
     std::vector<std::pair<W, int>> V(n_vec);
     std::vector<int> pi(n_vec);
     V[0] = std::make_pair(0, 0);
@@ -42,7 +43,7 @@ std::pair<int, AdjacencyList<W>> Prim(unsigned int n_vec, AdjacencyList<W> A){
         if(pi[i] != -1 && pi[i] != i)
             res.add(Edge(i, pi[i], V[i].first));
     }
-    return std::make_pair(n_vec, res);
+    return res;
 }
 
 #endif //ALGADVGRAPHS_PRIM_H

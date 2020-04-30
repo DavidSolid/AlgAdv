@@ -2,20 +2,17 @@
 // Created by Alessandro on 07/04/2020.
 //
 
-#ifndef ALGADVGRAPHS_KRUSKAL_NAIVE_H
-#define ALGADVGRAPHS_KRUSKAL_NAIVE_H
+#ifndef ALGADVGRAPHS_KRUSKAL_NAIVE_DFS_H
+#define ALGADVGRAPHS_KRUSKAL_NAIVE_DFS_H
 
 #include "../graph_structures/Edge.h"
 #include "../graph_structures/AdjacencyList.h"
 
 template <typename W>
-std::pair<int, AdjacencyList<W>> Kruskal_Naive(int, std::vector<Edge<W>>);
+AdjacencyList<W> Kruskal_Naive_DFS(int, std::vector<Edge<W>>);
 
 template <typename W>
-std::pair<int, AdjacencyList<W>> Kruskal_Naive(int n, std::vector<Edge<W>> E){
-    //number of iteration of the outer for
-    int iter = 0;
-
+AdjacencyList<W> Kruskal_Naive_DFS(int n, std::vector<Edge<W>> E){
     //line 1 : Initialize A empty
     AdjacencyList<W> A(n);
 
@@ -24,7 +21,6 @@ std::pair<int, AdjacencyList<W>> Kruskal_Naive(int n, std::vector<Edge<W>> E){
 
     //line 3 : for each edge in E do
     for(int i = 0; i< E.size(); ++i){
-        ++iter;
         //line 4 : if in A it does not exist a cycle between e.node_1 and e.node_2 then
         if(!A.DFS(E[i].get_node_1(), E[i].get_node_2())){
 
@@ -37,8 +33,8 @@ std::pair<int, AdjacencyList<W>> Kruskal_Naive(int n, std::vector<Edge<W>> E){
         }
     }
 
-    //line 6 : return A and the number of iteration
-    return std::make_pair(iter, A);
+    //line 6 : return A
+    return A;
 }
 
-#endif //ALGADVGRAPHS_KRUSKAL_NAIVE_H
+#endif //ALGADVGRAPHS_KRUSKAL_NAIVE_DFS_H
