@@ -1,0 +1,6 @@
+time = read.table("time.txt", header = TRUE, sep = ",", dec = ".")
+res = read.table("res.txt", header = TRUE, sep = ",", dec = ".")
+weight = read.table("weight.txt", header = TRUE, sep = ",", dec = ".")
+write.csv(x = time, file = "time_tab.csv")
+write.csv(x = res, file = "res_tab.csv")
+write.csv(x = weight, file = "weight_tab.csv")

@@ -4,3 +4,5 @@ cmake-build-debug/
 *.log
 *.pdf
 *.gz
+.Rhistory
+.RData
