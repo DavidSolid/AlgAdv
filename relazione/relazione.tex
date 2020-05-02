@@ -3,6 +3,8 @@
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{longtable}
+\usepackage{graphicx}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -293,6 +295,75 @@ if(A.get_edges() == (A.get_nodes() - 1))
 \textit{/*forse spostare in sezione a parte?*/}
 \section{Testing e analisi sperimentali}
 \subsection{Risultati prodotti}
-[...]
+\begin{flushleft}
+Di seguito è mostrata la tabella completa dei tempi di esecuzione degli algoritmi per ogni grafo:
+\input{time.tex}
+Possiamo osservare come i tempi di esecuzione crescono robe robbe robbbbe robe\\
+
+Medie dei tempi di esecuzione rispetto al numero di nodi:
+\input{time_mean.tex}
+
+Per ciclare tutto il dataset di grafi (ignorando i tempi per il parsing e contando solo l'esecuzione degli algoritmi):
+\input{sum_dataset.tex}
+Possiamo osservare come prim e union find sono belli mente DFS e BFS fanno schifo... anche se DFS è un pelino meglio di BFS
+
+\end{flushleft}
+
+\newpage
+\subsection{Grafi prodotti}
+\begin{flushleft}
+
+Di seguito i grafi dei tempi di esecuzione riferiti ai singoli algoritmi:
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{PRIM_MEDIA.png}
+\caption{\textbf{PRIM}}
+
+possiamo osservare che prim fa robe
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{K_UNION_MEDIA.png}
+\caption{\textbf{KRUSKAL UNION-FIND}}
+
+possiamo osservare che union find è leggermente più lento di prim
+\end{figure}
+
+\begin{figure}[h]
+
+\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{K_DFS_MEDIA.png}
+\caption{\textbf{KRUSKAL DFS}}
+
+possiamo osservare che dfs non è molto buono
+\end{figure}
+
+\begin{figure}[h]
+
+\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{K_BFS_MEDIA.png}
+\caption{\textbf{KRUSKAL BFS}}
+
+possiamo osservare che BFS è il peggiore
+\end{figure}
+
+Confrontiamo i due algoritmi migliori e i due algoritmi peggiori:
+
+\begin{figure}[h]
+
+\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{COMPARE_1.png}
+\caption{\textbf{Confronto PRIM e KRUSKAL Union-Find}}
+
+All'inizio i tempi di esecuzione sono molto simili mentre intorno ai 10.000 nodi si inizia a notare una differenza nel tempo di esecuzione
+\end{figure}
+
+\begin{figure}[h]
+
+\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{COMPARE_2.png}
+\caption{\textbf{Confronto KRUSKAL DFS e BFS}}
+
+All'inizio i tempi di esecuzione sono molto simili mentre intorno ai 40.000 nodi si inizia a notare una differenza nel tempo di esecuzione
+\end{figure}
+
+\end{flushleft}
+\newpage
 \section{Conclusioni}
 \end{document}          

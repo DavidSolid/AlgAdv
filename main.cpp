@@ -117,8 +117,10 @@ int main() {
             std::cout << entry.path() << "  Prim : " << elapsed_prim.count() << "  Kruskal Union Find : "
                       << elapsed_union.count() << "  Kruskal DFS : " << elapsed_naive_DFS.count()
                       << "  Kruskal BFS : " << elapsed_naive_BFS.count() << std::endl;
+
             std::cout << "MST WEIGHT : " << std::endl;
-            std::cout << "Prim : " << A_Prim.total_weight() << "  Kruskal Union Find : "
+
+            std::cout << entry.path() << "  Prim : " << A_Prim.total_weight() << "  Kruskal Union Find : "
                       << A_Kruskal_Union_Find.total_weight() << "  Kruskal DFS : " << A_Kruskal_Naive_DFS.total_weight()
                       << "  Kruskal BFS : " << A_Kruskal_Naive_BFS.total_weight() << std::endl;
         }
