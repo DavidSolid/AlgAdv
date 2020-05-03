@@ -1,10 +1,12 @@
 \documentclass[]{article}
-\usepackage[a4paper, total={6in, 10.5in}]{geometry}
+\usepackage[a4paper, total={6.5in, 10.5in}]{geometry}%6
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{longtable}
 \usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{float}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -64,8 +66,7 @@ Come riferimento per l'implementazione degli algoritmi è stato preso il seguent
 \begin{algorithm}[H]
 	\SetAlgoLined
 	\DontPrintSemicolon
-	\KwIn{Graph G}
-	\KwIn{vertex s}
+	\KwIn{Graph G, vertex s}
 	\KwResult{Graph of a MST}
 	\For{each u $\in$ V}{
 		key[u] $\gets$ +$\infty$\;
@@ -138,7 +139,17 @@ Abbiamo implementato una classe \textbf{Parser} che permette di tradurre solo i 
 Dato che utilizziamo i nodi come indici nelle strutture dati e nei file di esempio i vertici cominciano dall'intero 1, all'interno delle funzioni di parse diminuiamo tutti i nodi di un unità in modo da non sprecare l'indice 0, ciò comunque non porta alcuna differenza alle relazioni tra i nodi e al risultato finale.
 \subsection{Strutture dati}
 \subsubsection{MinHeap}
-\subsubsection{Union-Find}
+Nella classe \textbf{Minheap$<$W$>$} è stata implementata la struttura dati omonima, adeguatamente modificata ed adattata per essere utilizzata nel caso specifico dell'algoritmo di Prim allo scopo di minimizzare le differenze tra codice C++ e pseudocodice e massimizzarne l'efficienza.\\
+Internamente un MinHeap è una lista di coppie chiave-valore dove il primo elemento rappresenta il valore di tipo \textbf{W} utilizzato per l'ordinamento e il secondo il numero intero che identifica un nodo.\\
+Il nodo in posizione 0 rappresenta la radice dell'albero binario e dato un nodo in posizione $i$, il figlio sinistro è rappresentato dal noto in posizione $2i+1$, il sinistro dal nodo in posizione $2i+2$ e il padre dal nodo in posizione$\lfloor \frac{i-1}{2}\rfloor$.\\
+Essendo tutti i nodi inseriti al momento della creazione della struttura dati e mai eliminati se non grazie al metodo \verb|extractMin|, l'operazione di inserimento di un nuovo nodo non è stata implementata e l'ordinamento durante la costruzione di MinHeap è effettuato grazie al \textit{metodo di costruzione di Floyd} implementato nel metodo \verb|min_heapify|. Questo metodo, oltre a non necessitare dell'operatore di inserimento, ha il vantaggio di essere più efficiente della classica costruzione (complessità $O(n)$ anzichè $O(n\cdot\log n)$).\\
+Essendo necessario, durante l'esecuzione dell'algoritmo di Prim, aggiornare il valore della chiave per alcuni vertici all'interno di Minheap, la struttura dati mantiene una lista di interi \verb|track| che tiene traccia della posizione di ciascun vertice all'interno dell'albero (i.e. $track[i]=\begin{cases}
+-1 & \text{se } i \notin H\\
+\text{\textit{pos. di i}} & \text{se } i \in H\\
+\end{cases}$). Questa lista ci permette inoltre di implementare in maniera naturale l'operatore \verb|exists| che controlla se un vertice è già stato estratto dal MinHeap.
+Essendo l'operazione di aggiornamento effettuata solo in caso il nuovo valore sia minore di quello corrente, il metodo \verb|decreaseUpdate| utilizza la lista \verb|track| per individuare il nodo all'interno dell'heap, ne aggiorna il peso ed effettua un'operazione di \textit{up-heap} (implementata dal metodo privato \verb|push_up|). 
+\subsubsection{Union-Find (Disjoint-set)}
+La struttura dati è stata implementata nella classe \textbf{UnionFind} utilizzando come in forma di lista di coppie di interi. La coppia in posizione $i$ all'interno della lista è $<parent(i), size(i)>$, dove $parent(i)$ è il padre all'interno dell'albero che rappresenta il set a cui $i$ appartiene o, in caso $i$ sia radice, se stesso. Invece $size(i)$ rappresenta la dimensione dell'albero radicato in $i$, la quale viene utilizzata come criterio di merging durante le operazioni di unione. I metodi \verb|find| e \verb|unite| rappresentano rispettivamente le operazioni di ricerca e unione. Il secondo metodo inoltre si occupa ti aggiornare ad ogni invocazione i valori di $size(i)$.
 \subsection{Strutture per la rappresentazione di grafi}
 \subsubsection{Edge}
 Per rappresentare un lato composto dai  suoi due nodi adiacenti e il peso associato abbiamo creato la classe templetizzata \textbf{Edge$<$W$>$}, con
@@ -159,7 +170,80 @@ Abbiamo implementato anche la funzione \verb|BFS(int v,int w)| in forma iterativ
 \lstinputlisting[language=c++]{BFS.cpp}
 \subsection{Algoritmi}
 \subsubsection{Prim}
-\newpage
+\begin{flushleft}
+	La nostra implementazione presente nel file \verb|algorithms\prim.h| è la seguente:
+	
+	\lstset{language=c++, style=mystyle}
+	\lstinputlisting[language=c++]{prim.cpp}
+	
+	\textbf{Note implementative:}
+	
+	\medskip
+	Per la creazione e inizializzazione delle liste \textit{key} e $\pi$:
+	\lstset{language=c++, style=mystyle,backgroundcolor=\color{white}, firstnumber=1}  	 	
+	\begin{lstlisting}[mathescape=true]
+	for each u $\in$ V {
+		key[u] $\gets$ +$\infty$;
+		$\pi$[u] $\gets$ NULL;
+	}
+	key[s] $\gets$ 0;\end{lstlisting}
+	Sono state utilizzate rispettivamente una lista di interi \verb|pi| e una lista di coppie chiave-nodo associato \verb|V| in modo da utilizzare lo stesso contenitore per mantenere il valore di \textit{key} e come lista di input per il MinHeap $Q$.
+	\lstset{language=c++, style=mystyle, firstnumber=2}  	 	
+	\begin{lstlisting}[mathescape=true]
+	unsigned int n_vec = A.get_nodes();
+	std::vector<std::pair<W, int>> V(n_vec);
+	std::vector<int> pi(n_vec);\end{lstlisting}
+	Inizialmente \textit{key} è inizializzato utilizzando \verb|INT_MAX| al posto di $+\infty$ e $\pi$ utilizzando $-1$ al posto di \verb|null|.
+	\lstset{language=c++, style=mystyle, firstnumber=5}  	 	
+	\begin{lstlisting}[mathescape=true]
+	V[0] = std::make_pair(0, 0);
+	pi[0] = -1;
+	for(unsigned int i = 1; i < n_vec; ++i){
+		V[i] = std::make_pair(INT_MAX, i);
+		pi[i] = -1;
+	}\end{lstlisting}
+	
+	Per la guardia del ciclo più interno:
+	\lstset{language=c++, style=mystyle,backgroundcolor=\color{white}, firstnumber=9}  	 	
+	\begin{lstlisting}[mathescape=true]
+	for each v adjacent to u {\end{lstlisting}
+	Viene utilizzata la lista di adiacenza per estrarre il vettore di coppie nodo-peso \verb|v| adiacenti a \verb|u.second| (nodo restituito dall'operazione \verb|extractMin|).
+	\lstset{language=c++, style=mystyle, firstnumber=13}  	 	
+	\begin{lstlisting}[mathescape=true]
+	std::pair<W, int> u = Q.extractMin();
+	for(std::pair<int, W> v: A[u.second]){\end{lstlisting}
+	
+	Per l'aggiornamento dei vettori $\pi$ e \textit{key} all'interno del ciclo:
+	\lstset{language=c++, style=mystyle,backgroundcolor=\color{white}, firstnumber=10}  	 	
+	\begin{lstlisting}[mathescape=true]
+	if v $\in$ Q and w(u,v) $<$ key[v] {
+		$\pi$[v] $\gets$ u;
+		key[v] $\gets$ w(u,v);
+	}\end{lstlisting}
+	Si ricava il valore di $w(u,v)$ dalla coppia \verb|v| estratta dalla lista di adiacenza e il valore di \textit{key} dalla lista \verb|V|. La presenza di \verb|v.first| nel MinHeap è controllata usando il metodo \verb|exists|.\\
+	Utilizzando il metodo \verb|decreaseUpdate| si aggiorna il valore di \textit{key} all'interno del MinHeap e successivamente si aggiornano anche \verb|V| (in modo da mantenere la coerenza tra heap e valore di cui viene fatto il check prima di ogni update) e \verb|pi|.
+	\lstset{language=c++, style=mystyle, firstnumber=15}
+	\begin{lstlisting}
+	if(Q.exists(v.first) && v.second < V[v.first].first){
+		Q.decreaseUpdate(v.second, v.first);
+		V[v.first].first = v.second;
+		pi[v.first] = u.second;
+	}\end{lstlisting}
+	
+	Infine, per fare il \verb|return| del MST:
+	\lstset{language=c++, style=mystyle,backgroundcolor=\color{white}, firstnumber=16}  	 	
+	\begin{lstlisting}[mathescape=true]
+	return A;\end{lstlisting}
+	La costruzione è implicita ed è rappresentata dall'albero creato da $\pi$, con i pesi memorizzati in \textit{key}. Per esigenze di uniformità con gli altri algoritmi, tale costruzione viene esplicitata costruendo una \textbf{AdjacencyList} che rappresenta il MST. Questa costruzione viene fatta in tempo $O(n)$ e quindi non cambia la complessità asintotica dell'algoritmo. 
+	\lstset{language=c++, style=mystyle, firstnumber=22}
+	\begin{lstlisting}
+	AdjacencyList<W> res(n_vec);
+	for(unsigned int i = 0; i < n_vec; ++i){
+		if(pi[i] != -1 && pi[i] != i)
+			res.add(Edge(i, pi[i], V[i].first));
+	}
+	return res;\end{lstlisting}
+\end{flushleft}
 \subsubsection{Naive Kruskal}
 \begin{flushleft}
 La nostra implementazione presente nel file \verb|algorithms\kruskal_naive.h| è la seguente:
@@ -281,7 +365,7 @@ if (U.find(e.get_node_1()) != U.find(e.get_node_2())) {
 \end{lstlisting}
 
 \medskip
-Inoltre si è ottimizato l'agoritmo con un controllo addizionale per far terminare anticipatamente l'iterazione. 
+Inoltre si è ottimizato l'algoritmo con un controllo addizionale per far terminare anticipatamente l'iterazione. 
 
 Viene controllato che il numero di lati non sia mai maggiore o uguale al numero di nodi del grafo.
 
@@ -296,57 +380,70 @@ if(A.get_edges() == (A.get_nodes() - 1))
 \section{Testing e analisi sperimentali}
 \subsection{Risultati prodotti}
 \begin{flushleft}
-Di seguito è mostrata la tabella completa dei tempi di esecuzione degli algoritmi per ogni grafo:
+Di seguito è mostrata la tabella completa dei tempi di esecuzione (ignorando il tempo utilizzato per il parsing) degli algoritmi per ogni grafo e relativo peso del MST: 
 \input{time.tex}
-Possiamo osservare come i tempi di esecuzione crescono robe robbe robbbbe robe\\
 
-Medie dei tempi di esecuzione rispetto al numero di nodi:
+La tabella di seguito mostra la media dei tempi di esecuzioni di ogni algoritmo fra istanze di test con lo stesso numero di nodi. Tale tabella serve a chiarire la relazione tra taglia del grafo e tempi di esecuzione a prescindere dall'istanza specifica di esecuzione dei vari algoritmi.
 \input{time_mean.tex}
 
-Per ciclare tutto il dataset di grafi (ignorando i tempi per il parsing e contando solo l'esecuzione degli algoritmi):
-\input{sum_dataset.tex}
-Possiamo osservare come prim e union find sono belli mente DFS e BFS fanno schifo... anche se DFS è un pelino meglio di BFS
-
-\end{flushleft}
-
-\newpage
-\subsection{Grafi prodotti}
-\begin{flushleft}
-
-Di seguito i grafi dei tempi di esecuzione riferiti ai singoli algoritmi:
-
+\subsection{Analisi e conclusioni}
+Dall'analisi dei tempi d'esecuzione possiamo notare che generalmente gli algoritmi considerati più efficienti (quelli con complessità asintotica $O(m\cdot\log n)$) risultano essere effettivamente i più veloci.\\
+Si può infatti notare dalla Figura \ref{total} come il tempo totale di esecuzione dell'algoritmo di Prim e Kruskal con Union-Find sull'intero test-set ammonti a pochi secondi ($\leq 10 s$) mentre le varie istanze di Naive Kruskal impieghino più di 15 minuti.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth,height=\textheight,keepaspectratio]{grafo_costo_totale.png}
+	\caption{\textbf{Tempo di esecuzione totale}}
+	\label{total}
+\end{figure}
+Considerando invece i tempi di esecuzione medi in relazione al numero di nodi di un grafo, ci accorgiamo che, per grafi di piccola taglia, le varianti DFS e BFS di Naive Kruskal risultano essere più efficienti di Prim e Kruskal Union-Find.\\
+Come si può notare dalla Figura \ref{conf_tot}, Kruskal DFS e Kruskal BFS hanno tempi medi d'esecuzione più bassi rispetto agli altri algoritmi per grafi con numero di nodi, rispettivamente, minori di 200 e 100. Questo fenomeno è probabilmente dovuto all'overhead causato dall'utilizzo di strutture dati come MinHeap e Disjoint-Set che diventata tuttavia trascurabile per grafi di taglia sufficientemente alta ed è compensato dai benefici che esse forniscono in termini di efficienza.
 \begin{figure}[h]
-\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{PRIM_MEDIA.png}
-\caption{\textbf{PRIM}}
-
-possiamo osservare che prim fa robe
+	\centering
+	\includegraphics[width=0.9\textwidth,height=\textheight,keepaspectratio]{CONFRONTO_TOTALE.png}
+	\caption{\textbf{Confronto tra algoritmi su tempi d'esecuzione medi misurati su grafi della stessa taglia}}
+	\label{conf_tot}
 \end{figure}
 
+%\begin{figure}[h]
+%\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{PRIM_MEDIA.png}
+%\caption{\textbf{PRIM}}
+
+%possiamo osservare che prim fa robe
+%\end{figure}
+
+%\begin{figure}[h]
+%\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{K_UNION_MEDIA.png}
+%\caption{\textbf{KRUSKAL UNION-FIND}}
+
+%possiamo osservare che union find è leggermente più lento di prim
+%\end{figure}
+
+%\begin{figure}[h]
+
+%\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{K_DFS_MEDIA.png}
+%\caption{\textbf{KRUSKAL DFS}}
+
+%possiamo osservare che dfs non è molto buono
+%\end{figure}
+
+%\begin{figure}[h]
+
+%\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{K_BFS_MEDIA.png}
+%\caption{\textbf{KRUSKAL BFS}}
+
+%possiamo osservare che BFS è il peggiore
+%\end{figure}
+\subsubsection{Confronto tra le varianti di Naive Kruskal}
+Le due varianti di Naive Kruskal differiscono unicamente nell'approccio alla \textit{cycle detection} in fase di costruzione del MST. Adottando un approccio naive al problema è possibile scegliere un qualsiasi algoritmo di ricerca su grafo per capire se tra due vertici esiste un percorso che li collega. Abbiamo perciò ritenuto interessante esplorare due possibili varianti in modo da poter scegliere la più efficiente.\\
+Come mostrato in Figura \ref{dfs-bfs}, indipendentemente dalla variante selezionata, i tempi d'esecuzione sono molto simili tra loro per grafi con numero di nodi inferiore a 40.000. Tuttavia, per grafi di taglia superiore, diventa chiara la superiorità di DFS rispetto a BFS e la differenza tra i tempi di esecuzione raggiunge approssimativamente il minuto e mezzo per i grafi con 100.000 nodi.
 \begin{figure}[h]
-\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{K_UNION_MEDIA.png}
-\caption{\textbf{KRUSKAL UNION-FIND}}
-
-possiamo osservare che union find è leggermente più lento di prim
+	
+	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{COMPARE_2.png}
+	\caption{\textbf{Confronto KRUSKAL DFS e BFS}}
+	\label{dfs-bfs}
 \end{figure}
-
-\begin{figure}[h]
-
-\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{K_DFS_MEDIA.png}
-\caption{\textbf{KRUSKAL DFS}}
-
-possiamo osservare che dfs non è molto buono
-\end{figure}
-
-\begin{figure}[h]
-
-\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{K_BFS_MEDIA.png}
-\caption{\textbf{KRUSKAL BFS}}
-
-possiamo osservare che BFS è il peggiore
-\end{figure}
-
-Confrontiamo i due algoritmi migliori e i due algoritmi peggiori:
-
+\subsubsection{Confronto tra Prim e Kruskal Union-Find}
+Sebbene, a differenza del confronto precedente, [...]
 \begin{figure}[h]
 
 \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{COMPARE_1.png}
@@ -355,15 +452,5 @@ Confrontiamo i due algoritmi migliori e i due algoritmi peggiori:
 All'inizio i tempi di esecuzione sono molto simili mentre intorno ai 10.000 nodi si inizia a notare una differenza nel tempo di esecuzione
 \end{figure}
 
-\begin{figure}[h]
-
-\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{COMPARE_2.png}
-\caption{\textbf{Confronto KRUSKAL DFS e BFS}}
-
-All'inizio i tempi di esecuzione sono molto simili mentre intorno ai 40.000 nodi si inizia a notare una differenza nel tempo di esecuzione
-\end{figure}
-
 \end{flushleft}
-\newpage
-\section{Conclusioni}
 \end{document}          
