@@ -5,12 +5,12 @@
 #ifndef ALGADVGRAPHS_UNIONFIND_H
 #define ALGADVGRAPHS_UNIONFIND_H
 
-#include <map>
+#include <vector>
 #include <utility>
 
 class UnionFind {
 private:
-    std::map<int, std::pair<int, int>> data;
+    std::vector<std::pair<int, int>> data;
 public:
     explicit UnionFind(int*, int);
     [[nodiscard]] int size() const;
@@ -18,7 +18,7 @@ public:
     void unite(const int&, const int&);
 };
 
-UnionFind::UnionFind(int* raw, int sz){
+UnionFind::UnionFind(int* raw, int sz): data(sz){
     for(int i=0; i<sz; ++i){
         data[raw[i]] = std::make_pair(raw[i], 1);
     }
@@ -44,10 +44,10 @@ void UnionFind::unite(const int& fst, const int& snd) {
 
 int UnionFind::find(const int& elem) const {
     int current = elem;
-    int parent = (data.at(elem)).first;
+    int parent = data[elem].first;
     while(parent != current){
         current = parent;
-        parent = (data.at(parent)).first;
+        parent = data[parent].first;
     }
     return parent;
 }
