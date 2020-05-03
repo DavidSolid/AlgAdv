@@ -6,16 +6,13 @@ colnames(me)  <- c("NODES", "PRIM", "UNION-FIND", "DFS", "BFS")
 me <- aggregate(.~NODES, data = me, mean)
 
 options(scipen=999)
-plot(x = me$NODES, y = me$BFS, log = "xy", type = "l", col= "blue", ylab = "TEMPO DI ESECUZIONE", xlab = "NUMERO DI NODI", main = "CONFRONTO KRUSKAL DFS / BFS", lty = 1, lwd = 2)
+plot(x = me$NODES, y = me$BFS, log = "xy", type = "l", col= "blue", ylab = "TEMPO DI ESECUZIONE (s)", xlab = "NUMERO DI NODI", main = "CONFRONTO TEMPI MEDI DEGLI ALGORITMI PER NUMERO DI NODI", lty = 1, lwd = 2)
 lines(x = me$NODES, y = me$`UNION-FIND`, col= "green", lty = 1, lwd = 2)
 lines(x = me$NODES, y = me$PRIM,col="red", lty = 1, lwd = 2)
+lines(x = me$NODES, y = me$DFS,col="violet", lty = 1, lwd = 2)
 
-
-
-
-lines(x = me$NODES, y = me$DFS,col="orange", lty = 1, lwd = 2)
-points(x = me$NODES, y = me$DFS, pch= 0, col="orange", cex.lab=0.75)
-points(x = me$NODES, y = me$BFS, pch= 1, col="blue", cex.lab=0.75)
-points(x = me$NODES, y = me$`UNION-FIND`, pch= 2, col="green", cex.lab=0.75)
-points(x = me$NODES, y = me$PRIM, pch= 6, col="red", cex.lab=0.75)
-#legend(legend=c("DFS", "BFS"), col=c("orange", "blue"), title="Algoritmo", text.font=4, "topleft", lty= 2:3, lwd = 2)
+points(x = me$NODES, y = me$DFS, pch= 15, col="violet", cex=0.85)
+points(x = me$NODES, y = me$BFS, pch= 16, col="blue", cex=0.85)
+points(x = me$NODES, y = me$`UNION-FIND`, pch= 17, col="green", cex=0.85)
+points(x = me$NODES, y = me$PRIM, pch= 18, col="red", cex=0.85)
+legend(legend=c("BFS", "DFS", "UNION-FIND", "PRIM"), col=c("blue", "violet", "green", "red"), title="Algoritmo", text.font=4, "topleft", lty= 1, lwd = 2)

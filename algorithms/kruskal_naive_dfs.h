@@ -21,6 +21,7 @@ AdjacencyList<W> Kruskal_Naive_DFS(int n, std::vector<Edge<W>> E){
 
     //line 3 : for each edge in E do
     for(int i = 0; i< E.size(); ++i){
+
         //line 4 : if in A it does not exist a cycle between e.node_1 and e.node_2 then
         if(!A.DFS(E[i].get_node_1(), E[i].get_node_2())){
 

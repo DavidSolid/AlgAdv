@@ -14,36 +14,64 @@ template <typename W>
 AdjacencyList<W> Prim(AdjacencyList<W>);
 
 template <typename W>
-AdjacencyList<W> Prim(AdjacencyList<W> A){
-    unsigned int n_vec = A.get_nodes();
+AdjacencyList<W> Prim(AdjacencyList<W> G){
+    //s == 0
+    unsigned int n_vec = G.get_nodes();
+
+    //initialize Key[]
     std::vector<std::pair<W, int>> V(n_vec);
+
+    //initialize pi[]
     std::vector<int> pi(n_vec);
-    V[0] = std::make_pair(0, 0);
-    pi[0] = -1;
+
+    //line 1 : for each u in  V do
     for(unsigned int i = 1; i < n_vec; ++i){
+
+        //line 2 : Key[u] = +INF
         V[i] = std::make_pair(INT_MAX, i);
+
+        //line 3 : pi[u] <- NULL
         pi[i] = -1;
     }
+
+    //line 4 : Key[s] <- 0
+    V[0] = std::make_pair(0, 0);
+    pi[0] = -1;
+
+    //line 5 : Q <- V
     MinHeap Q(V);
+
+    //line 6 : while Q is not empty do
     while(Q.size()!=0){
+
+        //line 7 : u <- extractMin(Q)
         std::pair<W, int> u = Q.extractMin();
-        for(std::pair<int, W> v: A[u.second]){
-            /*v = v.first; w(u,v) = v.second*/
-            if(Q.exists(v.first) && v.second < V[v.first].first /*key[v]*/){
+
+        //line 8 : for each v adjacent to u do
+        for(std::pair<int, W> v: G[u.second]){
+
+            //line 9 : if v in Q and w(u,v) < Key[v] then
+            if(Q.exists(v.first) && v.second < V[v.first].first){
                 Q.decreaseUpdate(v.second, v.first);
-                V[v.first].first = v.second;
+
+                //line 10 : pi[v] <- u
                 pi[v.first] = u.second;
-                //key[v] = w(u, v); pi[v] = u
+
+                //line 11 : Key[v] <- w(u,v)
+                V[v.first].first = v.second;
             }
         }
     }
-    /*return V*/
-    AdjacencyList<W> res(n_vec);
+
+    //transform the list of edge into an Adjacency List
+    AdjacencyList<W> A(n_vec);
     for(unsigned int i = 0; i < n_vec; ++i){
         if(pi[i] != -1 && pi[i] != i)
-            res.add(Edge(i, pi[i], V[i].first));
+            A.add(Edge(i, pi[i], V[i].first));
     }
-    return res;
+
+    //line 12 : return A
+    return A;
 }
 
 #endif //ALGADVGRAPHS_PRIM_H

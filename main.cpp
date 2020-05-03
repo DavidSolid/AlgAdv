@@ -1,9 +1,7 @@
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include <algorithm>
 #include <chrono>
-#include <numeric>
 #include <filesystem>
 #include "utility/Parser.h"
 #include "graph_structures/Edge.h"
