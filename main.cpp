@@ -16,6 +16,7 @@
 int main() {
 
     {
+        //IF YOU WANT TO CHECK ONLY ONE GRAPH YOU CAN USE THIS COMMENTED SCRIPT
         /*
         //Parse file .txt into graph G
         Parser myParser = Parser();
@@ -79,8 +80,6 @@ int main() {
         //std::cout << "Time : " << elapsed_seconds.count() <<  std::endl;
 
         */
-
-        int iter = 0;
 
         std::string path = "..\\dataset";
         Parser myParser = Parser();

@@ -93,3 +93,6 @@ points(x = me$NODES, y = me$DFS, pch= 0, col="orange", lwd = 2)
 points(x = me$NODES, y = me$BFS, pch= 1, col="blue")
 legend(legend=c("DFS", "BFS"),
        col=c("orange", "blue"), title="Algoritmo", text.font=4, "topleft", lty= 2:3, lwd = 2)
+
+
+
