@@ -47,9 +47,9 @@ void UnionFind::unite(const int& fst, const int& snd) {
 }
 
 int UnionFind::find(const int& elem) const {
-    //for the given element, get parent until current == parent
     int current = elem;
     int parent = data[elem].first;
+    //for the given element, get parent until current == parent
     while(parent != current){
         current = parent;
         parent = data[parent].first;

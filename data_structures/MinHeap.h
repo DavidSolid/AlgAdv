@@ -69,7 +69,7 @@ void MinHeap<W>::push_up(int pos){
 //down-heap operation of a given node
 template <typename W>
 void MinHeap<W>::push_down(int pos){
-    //similar to up-heap
+    //same as up-heap
     while(2*pos + 1 <= (int)(array.size()) - 1){
         int i_min = min_child(pos);
         std::pair<W, int>& m_child = array[i_min];
