@@ -13,8 +13,10 @@ template <typename W>
 class MinHeap {
 private:
     std::vector<std::pair<W, int>> array;
+    //tracking list
     int* track;
 
+    //node level operations
     [[nodiscard]] int min_child(int) const;
     void push_up(int);
     void push_down(int);
@@ -32,11 +34,14 @@ public:
 };
 
 /*private methods*/
+//finds minimum child of a given non-leaf node
 template <typename W>
 int MinHeap<W>::min_child(int pos) const{
+    //check if node has both children
     if(2*pos + 2 >= array.size()){
         return 2*pos + 1;
     }
+    //compare key value of both nodes
     std::pair<W, int> f_child = array[2*pos + 1];
     std::pair<W, int> s_child = array[2*pos + 2];
     if(f_child < s_child){
@@ -45,11 +50,14 @@ int MinHeap<W>::min_child(int pos) const{
     return 2*pos + 2;
 }
 
+//up-heap operation on a given node
 template <typename W>
 void MinHeap<W>::push_up(int pos){
+    //repeat until conditions are met or until node is root
     while(std::floor((double)(pos - 1) / 2) >= 0){
         std::pair<W, int>& r_cur = array[pos];
         std::pair<W, int>& r_parent = array[std::floor((pos - 1) / 2)];
+        //if current node's key is smaller than parent's, swap them, else terminate
         if(r_cur < r_parent){
             std::swap(r_cur, r_parent);
             std::swap(track[r_cur.second], track[r_parent.second]);
@@ -58,8 +66,10 @@ void MinHeap<W>::push_up(int pos){
     }
 }
 
+//down-heap operation of a given node
 template <typename W>
 void MinHeap<W>::push_down(int pos){
+    //similar to up-heap
     while(2*pos + 1 <= (int)(array.size()) - 1){
         int i_min = min_child(pos);
         std::pair<W, int>& m_child = array[i_min];
@@ -72,9 +82,12 @@ void MinHeap<W>::push_down(int pos){
     }
 }
 
+//Floyd heap construction method
 template <typename W>
 void MinHeap<W>::min_heapify(){
+    //pick last non leaf node
     int last_p = static_cast<int>(std::floor((double)(array.size())/2 - 1));
+    //repeat down-heap operation until root
     for(int i = last_p; i >= 0; --i){
         push_down(i);
     }
@@ -114,17 +127,23 @@ unsigned int MinHeap<W>::size() const {
 
 template <typename W>
 bool MinHeap<W>::exists(unsigned int v) const {
+    //check if track[v] in not -1
     return track[v] >= 0;
 }
 
 template <typename W>
 std::pair<W, int> MinHeap<W>::extractMin() {
+    //select root value
     std::pair<W, int> val = array[0];
     std::pair<W, int> to_swap = array[array.size() - 1];
+    //swap root with last element
     std::swap(array[0], array[array.size() - 1]);
     std::swap(track[val.second], track[to_swap.second]);
+    //eliminate min
     array.pop_back();
+    //update track to -1
     track[val.second] = -1;
+    //rebuild minheap pushing down the new root
     push_down(0);
     return val;
 }
@@ -138,9 +157,12 @@ MinHeap<W>::MinHeap(const MinHeap& cpy): track(new int[cpy.size()]){
 
 template <typename W>
 void MinHeap<W>::decreaseUpdate(const W& n_value, int v) {
+    //if node to update is present
     if(track[v] >=0){
         std::pair<W, int>& o_value = array[track[v]];
+        //if the new value is less than the original
         if(n_value <= o_value.first){
+            //update value and up-heap the selected node
             o_value.first = n_value;
             push_up(track[v]);
         }

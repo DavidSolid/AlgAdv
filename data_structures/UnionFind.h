@@ -19,6 +19,7 @@ public:
 };
 
 UnionFind::UnionFind(int* raw, int sz): data(sz){
+    //set all elements' parent to self and initialize set tree size to 1
     for(int i=0; i<sz; ++i){
         data[raw[i]] = std::make_pair(raw[i], 1);
     }
@@ -29,9 +30,12 @@ int UnionFind::size() const {
 }
 
 void UnionFind::unite(const int& fst, const int& snd) {
+    //find set of the two elements
     int f_tree = find(fst);
     int s_tree = find(snd);
+    // if the two elements do not belong to the same set
     if(f_tree != s_tree){
+        //find smaller tree and merge them updating the size of the bigger one's root
         if(data[f_tree].second >= data[s_tree].second){
             data[s_tree].first = f_tree;
             data[f_tree].second += data[s_tree].second;
@@ -43,6 +47,7 @@ void UnionFind::unite(const int& fst, const int& snd) {
 }
 
 int UnionFind::find(const int& elem) const {
+    //for the given element, get parent until current == parent
     int current = elem;
     int parent = data[elem].first;
     while(parent != current){
