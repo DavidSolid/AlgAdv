@@ -35,7 +35,7 @@
 
 % Title Page
 \title{Homework1, Algoritmi su Grafi}
-\author{Enrico Cancelli, \textit{matr.} xxxxx\\
+\author{Enrico Cancelli, \textit{matr.} 1237293\\
 		Alessandro Pegoraro, \textit{matr.} 1240466}
 
 
@@ -154,7 +154,7 @@ Nella classe abbiamo ridefinito l'operatore di relazione \textbf{$<$} in modo ta
 \subsubsection{Adjacency List}
 \begin{flushleft}
 Per rappresentare il grafo abbiamo utilizzato una lista di adiacenza implementata dalla classe \textbf{AdjacencyList$<$W$>$}, con \textbf{W} tipo del peso dei lati.\\
-La scelta di una struttura densa come la lista di adiacenza invece di una struttura sparsa come la matrice di adiacenza è dovuta ad un analisi del dataset fornito, dato che i grafi possedevano un numero di lati nettamente inferiore al numero dei nodi abbiamo preferito ridurre lo spazio occupato dalla rappresentazione.\\
+Dato che i grafi possedevano un numero di lati nettamente inferiore al quadrato del numero dei nodi abbiamo preferito ridurre lo spazio occupato dalla rappresentazione scegliendo una struttura densa come la lista di adiacenza invece di una struttura sparsa come la matrice di adiacenza.\\
 La classe è composta da un \verb|std::vector| in cui ogni indice rappresenta un nodo, e ogni elemento è a sua volta un \verb|std::vector| di coppie \verb|std::pair| nella quale il primo membro è un intero che rappresenta un nodo adiacente all'indice, mentre il secondo elemento è il peso associato al lato che collega i due nodi.\\
 
 Per verificare se due nodi sono connessi nel grafo abbiamo implementato la funzione ricorsiva \verb|DFS(int v,int w)|:
@@ -167,7 +167,7 @@ Abbiamo implementato anche la funzione \verb|BFS(int v,int w)| in forma iterativ
 \lstinputlisting[language=c++]{BFS.cpp}
 \end{flushleft}
 Nella classe abbiamo inoltre implementato  \verb|get_nodes()| e \verb|get_edges()| per ritornare rispettivamente il numero di nodi e di lati in tempo costante, ciò è possibile dato che la prima funzione ritorna la size del \verb|std::vector|, mentre per la seconda funzione abbiamo predisposto una variabile per tener conto del numero di lati durante la costruzione.\\
-In quanto il calcolo del peso totale del MST non era presente negli algoritmi ma è possibile calcolarlo nel \verb|main| la funzione \verb|total_weight()| non è stata ottimizzata predisponendo una variabile ma semplicemente cicla tutta la \textbf{AdjacencyList$<$W$>$} sommando i pesi e divide il risultato a metà
+In quanto il calcolo del peso totale del MST non era presente negli algoritmi ma è possibile calcolarlo nel \verb|main| la funzione \verb|total_weight()| non è stata ottimizzata predisponendo una variabile ma semplicemente cicla tutta la \textbf{AdjacencyList$<$W$>$} sommando i pesi e divide il risultato a metà.
 \lstset{language=c++, style=mystyle}
 \lstinputlisting[language=c++]{total_weight.cpp}
 \newpage
@@ -251,7 +251,7 @@ In quanto il calcolo del peso totale del MST non era presente negli algoritmi ma
 \end{flushleft}
 \subsubsection{Naive Kruskal}
 \begin{flushleft}
-Abbiamo implementato l'algoritmo in due versioni diverse presenti nei file \verb|algorithms\kruskal_naive_bfs.h| e \verb|algorithms\kruskal_naive_dfs.h|, l'unica differenza tra le due implementazioni è la chiamata alla funzione per il controllo di presenza di un ciclo durante la costruzione del \textbf{MST}, di seguito andremo ad analizzare la versione che utilizza \textbf{DFS}:
+Abbiamo implementato l'algoritmo in due versioni diverse presenti nei file \verb|algorithms\kruskal_naive_bfs.h| e \verb|algorithms\kruskal_naive_dfs.h|, l'unica differenza tra le due implementazioni è l'approccio alla \textit{cycle detection} in fase di costruzione del MST, di seguito andremmo ad analizzare la versione che utilizza \textbf{DFS}:
 
 \lstset{language=c++, style=mystyle}
 \lstinputlisting[language=c++]{k_naive.cpp}
@@ -384,7 +384,8 @@ Per il progetto è stato utilizzato il build-system CMake. Per generare il makef
 Di seguito è mostrata la tabella completa dei tempi di esecuzione (ignorando il tempo utilizzato per il parsing) degli algoritmi per ogni grafo e relativo peso del MST: 
 \input{time.tex}
 
-La tabella di seguito mostra la media dei tempi di esecuzione di ogni algoritmo fra istanze di grafi del dataset con lo stesso numero di nodi. Tale tabella serve a chiarire la relazione tra taglia del grafo e tempi di esecuzione a prescindere dall'istanza specifica di esecuzione dei vari algoritmi.
+La tabella di seguito mostra la media dei tempi di esecuzione di ogni algoritmo fra istanze di grafi del dataset con lo stesso numero di nodi.\\
+Tale tabella serve a chiarire la relazione tra taglia del grafo e tempi di esecuzione a prescindere dall'istanza specifica di esecuzione dei vari algoritmi.
 \input{time_mean.tex}
 \newpage
 \subsection{Analisi e conclusioni}
@@ -398,17 +399,24 @@ Si può infatti notare dalla Figura \ref{total} come il tempo totale di esecuzio
 \end{figure}
 
 \newpage
+\subsubsection{Confronto tra tutti gli algoritmi}
 Considerando invece i tempi di esecuzione medi in relazione al numero di nodi di un grafo, ci accorgiamo che, per grafi di piccola taglia, le varianti DFS e BFS di Naive Kruskal risultano essere più efficienti di Prim.\\
 Come si può notare dalla Figura \ref{conf_tot}, Kruskal DFS e Kruskal BFS hanno tempi medi d'esecuzione più bassi rispetto all'algoritmo di Prim per grafi con numero di nodi, rispettivamente, minori di 100 e 40.
 Questo fenomeno è probabilmente dovuto all'overhead causato dall'utilizzo di strutture dati come MinHeap e dalla costruzione della AdjacencyList finale che diventa tuttavia trascurabile per grafi di taglia sufficientemente alta ed è compensato dai benefici che esse forniscono in termini di efficienza.\\
-Notiamo infine che Kruskal con Union-Find è l'algoritmo più efficiente e riesce ad ottenere prestazioni migliori rispetto agli altri algoritmi su grafi di qualsiasi taglia.
+Notiamo inoltre che Kruskal con Union-Find è l'algoritmo più efficiente e riesce ad ottenere prestazioni migliori rispetto agli altri algoritmi su grafi di qualsiasi taglia.\\
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{CONFRONTO_TOTALE.png}
 	\caption{\textbf{Confronto tra algoritmi su tempi d'esecuzione medi misurati su grafi della stessa taglia}}
 	\label{conf_tot}
 \end{figure}
-Notiamo inoltre un caso particolare per i nodi di taglia 100 nella quale tutti gli algoritmi sembrano avere un tempo di esecuzione simile, osservando i singoli grafi possiamo notare come il grafo 20 risulti l'unico in cui \textbf{KRUSKAL UNION-FIND} abbia un tempo di esecuzione peggiore di tutte le altre implementazioni.
+Notiamo infine un caso particolare per i grafi di taglia 100 nella quale tutti gli algoritmi sembrano avere un tempo di esecuzione simile, osservando i singoli grafi possiamo notare come il grafo 20 risulti l'unico in cui \textbf{KRUSKAL UNION-FIND} abbia un tempo di esecuzione peggiore di tutte le altre implementazioni.
+
+%\begin{figure}[h]
+%	\centering
+%	\includegraphics[width=0.5\textwidth,height=0.2\textheight,keepaspectratio]{grafo_20.png}\%\caption{\textbf{Rappresentazione senza lati pesati del grafo 20}}
+%	\label{grafo_20}
+%\end{figure}
 
 %\begin{figure}[h]
 %\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{PRIM_MEDIA.png}
@@ -458,12 +466,6 @@ Come affermato in precedenza, Kruskal Union-Find è l'algoritmo più veloce su o
 \includegraphics[width=0.9\textwidth,height=\textheight,keepaspectratio]{COMPARE_1.png}
 \caption{\textbf{Confronto PRIM e KRUSKAL Union-Find}}
 \label{prim-uf}
-\end{figure}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{grafo_20.png}\caption{\textbf{Rappresentazione senza lati pesati del grafo 20}}
-	\label{grap_20}
 \end{figure}
 \end{flushleft}
 \end{document}          

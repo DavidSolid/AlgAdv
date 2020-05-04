@@ -12,7 +12,7 @@
 class Parser {
 public:
     explicit Parser();
-    std::vector<std::vector<int>> parse(const std::filesystem::path& filename) const;
+    [[nodiscard]] std::vector<std::vector<int>> parse(const std::filesystem::path& filename) const;
     void parse(const std::filesystem::path& filename, std::vector<std::vector<int>>& data) const;
 };
 
