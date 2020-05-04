@@ -35,7 +35,8 @@
 
 % Title Page
 \title{Homework1, Algoritmi su Grafi}
-\author{Enrico Cancelli, Alessandro Pegoraro}
+\author{Enrico Cancelli, mat. xxxxx\\
+		Alessandro Pegoraro, mat. xxxxx}
 
 
 \begin{document}
@@ -156,7 +157,7 @@ Essendo l'operazione di aggiornamento effettuata solo in caso il nuovo valore si
 \subsubsection{Union-Find (Disjoint-set)}
 Nella classe \textbf{UnionFind} è stata implementata la struttura dati per l'algoritmo Kruskal Union-Find, utilizzando come base un vettore di coppie di interi in cui ogni indice rappresenta un nodo.\\
 La coppia in posizione $i$ all'interno della lista è $<parent(i), size(i)>$, dove $parent(i)$ è il padre del nodo all'interno dell'albero che rappresenta il set a cui $i$ appartiene o, in caso $i$ sia radice, se stesso. Invece $size(i)$ rappresenta la dimensione dell'albero radicato in $i$, la quale viene utilizzata come criterio di merging durante le operazioni di unione.\\
-I metodi \verb|find| e \verb|unite| rappresentano rispettivamente le operazioni di ricerca e unione. Il secondo metodo inoltre si occupa ti aggiornare ad ogni invocazione i valori di $size(i)$.
+I metodi \verb|find| e \verb|unite| rappresentano rispettivamente le operazioni di ricerca e unione. Il secondo metodo inoltre si occupa di aggiornare ad ogni invocazione i valori di $size(i)$.
 \newpage
 \subsection{Strutture per la rappresentazione di grafi}
 \subsubsection{Edge}
@@ -274,8 +275,7 @@ sort edges of G by cost
 \end{lstlisting}
 
 \smallskip
-si è utilizzata la funzione \verb|std::sort()| che assicura l'ordinamento in tempo O(non mi ricordo scrivi tu Enrico ammortizzato)%TODO 
-, è stato necessario ridefinire l'operatore di minimo \textbf{$<$} nella classe \textbf{Edge$<$W$>$}
+si è utilizzata la funzione \verb|std::sort()| che assicura l'ordinamento in tempo $O(m\cdot\log n)$, è stato necessario ridefinire l'operatore di minimo \textbf{$<$} nella classe \textbf{Edge$<$W$>$}
  
 \lstset{language=c++, style=mystyle, firstnumber=3} 	 	
 \begin{lstlisting}
@@ -383,8 +383,8 @@ if(A.get_edges() == (A.get_nodes() - 1))
     break;
 \end{lstlisting}
 \end{flushleft}
-\subsection{Note su compilazione e struttura del codice}
-\textit{/*forse spostare in sezione a parte?*/}
+\subsection{Note su compilazione}
+Per il progetto è stato utilizzato il build-system CMake. Per generare il makefile è necessario disporre di una versione di tale software $\geq 3.14$ e per la compilazione è necessario un compilatore che supporti lo standard 2017 del linguaggio C++.
 \newpage
 \section{Testing e analisi sperimentali}
 \subsection{Risultati prodotti}
@@ -404,8 +404,9 @@ Si può infatti notare dalla Figura \ref{total} come il tempo totale di esecuzio
 	\caption{\textbf{Tempo di esecuzione totale}}
 	\label{total}
 \end{figure}
-Considerando invece i tempi di esecuzione medi in relazione al numero di nodi di un grafo, ci accorgiamo che, per grafi di piccola taglia, le varianti DFS e BFS di Naive Kruskal risultano essere più efficienti di Prim e Kruskal Union-Find.\\
-Come si può notare dalla Figura \ref{conf_tot}, Kruskal DFS e Kruskal BFS hanno tempi medi d'esecuzione più bassi rispetto agli altri algoritmi per grafi con numero di nodi, rispettivamente, minori di 200 e 100. Questo fenomeno è probabilmente dovuto all'overhead causato dall'utilizzo di strutture dati come MinHeap e Disjoint-Set che diventa tuttavia trascurabile per grafi di taglia sufficientemente alta ed è compensato dai benefici che esse forniscono in termini di efficienza.
+Considerando invece i tempi di esecuzione medi in relazione al numero di nodi di un grafo, ci accorgiamo che, per grafi di piccola taglia, le varianti DFS e BFS di Naive Kruskal risultano essere più efficienti di Prim.\\
+Come si può notare dalla Figura \ref{conf_tot}, Kruskal DFS e Kruskal BFS hanno tempi medi d'esecuzione più bassi rispetto all'algoritmo di Prim per grafi con numero di nodi, rispettivamente, minori di 100 e 40. Questo fenomeno è probabilmente dovuto all'overhead causato dall'utilizzo di strutture dati come MinHeap e dalla costruzione della AdjacencyList finale che diventa tuttavia trascurabile per grafi di taglia sufficientemente alta ed è compensato dai benefici che esse forniscono in termini di efficienza.\\
+Notiamo infine che Kruskal con Union-Find è l'algoritmo più efficiente e riesce ad ottenere prestazioni migliori rispetto agli altri algoritmi su grafi di qualsiasi taglia.
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.9\textwidth,height=\textheight,keepaspectratio]{CONFRONTO_TOTALE.png}
@@ -444,21 +445,21 @@ Come si può notare dalla Figura \ref{conf_tot}, Kruskal DFS e Kruskal BFS hanno
 %\end{figure}
 \subsubsection{Confronto tra le varianti di Naive Kruskal}
 Le due varianti di Naive Kruskal differiscono unicamente nell'approccio alla \textit{cycle detection} in fase di costruzione del MST. Adottando un approccio naive al problema è possibile scegliere un qualsiasi algoritmo di ricerca su grafo per capire se tra due vertici esiste un percorso che li collega. Abbiamo perciò ritenuto interessante esplorare due possibili varianti in modo da poter scegliere la più efficiente.\\
-Come mostrato in Figura \ref{dfs-bfs}, indipendentemente dalla variante selezionata, i tempi d'esecuzione sono molto simili tra loro per grafi con numero di nodi inferiore a 40.000. Tuttavia, per grafi di taglia superiore, diventa chiara la superiorità di DFS rispetto a BFS e la differenza tra i tempi di esecuzione raggiunge approssimativamente il minuto e mezzo per i grafi con 100.000 nodi.
+Come mostrato in Figura \ref{dfs-bfs}, indipendentemente dalla variante selezionata, i tempi d'esecuzione sono molto simili tra loro per grafi con numero di nodi inferiore a 20.000. Tuttavia, per grafi di taglia superiore, diventa chiara la superiorità di DFS rispetto a BFS e la differenza tra i tempi di esecuzione raggiunge approssimativamente il minuto e mezzo per i grafi con 100.000 nodi.\\
+Ciò è probabilmente dovuto alla topologia dei grafi del test set che, essendo generalmente non densi (i.e. $m \ll n(n-1)/2$), richiedono molto spesso visite in profondità per trovare un percorso tra due nodi in caso la condizione di ciclicità sia verificata.
 \begin{figure}[h]
-	
-	\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{COMPARE_2.png}
+	\centering
+	\includegraphics[width=0.9\textwidth,height=\textheight,keepaspectratio]{COMPARE_2.png}
 	\caption{\textbf{Confronto KRUSKAL DFS e BFS}}
 	\label{dfs-bfs}
 \end{figure}
 \subsubsection{Confronto tra Prim e Kruskal Union-Find}
-Sebbene, a differenza del confronto precedente, [...]
+Come affermato in precedenza, Kruskal Union-Find è l'algoritmo più veloce su ogni singola istanza presente nel test-set. Tuttavia la differenza tra esso e Prim, come mostrato in Figura \ref{prim-uf}, diventa significativa solo per grafi di taglia superiore a 1000 nodi, pur rimanendo nello stesso ordine di grandezza. In ogni caso, sia per Prim che per Kruskal Union-Find, i tempi d'esecuzione per una singola istanza rimangono sotto il secondo (il tempo massimo raggiunto da Prim è 0.32s).
 \begin{figure}[h]
-
-\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{COMPARE_1.png}
+\centering
+\includegraphics[width=0.9\textwidth,height=\textheight,keepaspectratio]{COMPARE_1.png}
 \caption{\textbf{Confronto PRIM e KRUSKAL Union-Find}}
-
-All'inizio i tempi di esecuzione sono molto simili mentre intorno ai 10.000 nodi si inizia a notare una differenza nel tempo di esecuzione
+\label{prim-uf}
 \end{figure}
 
 \end{flushleft}
