@@ -118,56 +118,67 @@ Come riferimento per l'implementazione degli algoritmi è stato preso il seguent
 		}
 	}
 	return A\;
-	\caption{Kruskal con Union-Find}
+	\caption{Kruskal Union-Find}
 \end{algorithm}
 \subsection{Struttura del progetto}
-Nelle successive sezioni descriveremo in dettaglio l'implementazione di questi algoritmi e delle relative strutture dati di supporto e li testeremo su un dataset generato randomicamente, analizzando i risultati ottenuti e le performance in termini di tempo d'esecuzione e spazio allocato in memoria.\\
+Nelle successive sezioni descriveremo in dettaglio l'implementazione di questi algoritmi e delle relative strutture dati di supporto e li testeremo su un dataset fornito generato randomicamente, analizzando i risultati ottenuti e le performance in termini di tempo d'esecuzione e spazio allocato in memoria.\\
 I test saranno condotti su grafi non necessariamente semplici (quindi con la possibile presenza di \textit{self loops} e archi multipli tra due nodi) e con pesi non necessariamente positivi.\\
-Abbiamo scelto di implementare tali algoritmi utilizzando il linguaggio \textit{C++17} per motivi di efficienza e per potere, allo stesso tempo, utilizzare astrazioni tipiche dei linguaggi ad oggetti rendendo il codice prodotto più modulare.
+Abbiamo scelto di implementare tali algoritmi utilizzando il linguaggio \textit{C++17} per motivi di efficienza e per potere, allo stesso tempo, utilizzare astrazioni tipiche dei linguaggi ad oggetti rendendo il codice prodotto più modulare tramite l'utilizzo di classi templetizzate.
 \section{Implementazione}
 In questa sezione verranno esposte e adeguatamente motivate le scelte implementative adottate durante lo sviluppo. L'intero progetto è stato realizzato facendo il più possibile uso di codice generico (template di classe per le strutture dati di supporto e template di funzione per gli algoritmi).\\
 Infine verrà data una spiegazione dettagliata sulla struttura del codice realizzato ed eventuali note per la compilazione.
 \subsection{Parser}
-Considerando che il formato dei grafi di esempio è standardizzato nel seguente modo:
+Considerando che il formato dei grafi di esempio nel dataset è standardizzato nel seguente modo:
 \begin{verbatim}
 [numero_di_vertici] [numero_di_archi] 
 [un_vertice_arco_1] [altro_vertice_arco_1] [peso_arco_1] 
 [un_vertice_arco_2] [altro_vertice_arco_2] [peso_arco_2] 
-...
+... 
+[un_vertice_arco_N] [altro_vertice_arco_N] [peso_arco_N]
 \end{verbatim}
-Abbiamo implementato una classe \textbf{Parser} che permette di tradurre solo i file nel formato descritto.\\
-Dato che utilizziamo i nodi come indici nelle strutture dati e nei file di esempio i vertici cominciano dall'intero 1, all'interno delle funzioni di parse diminuiamo tutti i nodi di un unità in modo da non sprecare l'indice 0, ciò comunque non porta alcuna differenza alle relazioni tra i nodi e al risultato finale.
+abbiamo implementato una classe \textbf{Parser} che permette di decodificare solo i file nel formato descritto.\\
+Dato che utilizziamo i nodi come indici nelle strutture dati e nei file di esempio i vertici cominciano dall'intero 1, all'interno delle funzioni di decodifica diminuiamo tutti i nodi di un unità in modo da non sprecare l'indice 0, ciò comunque non comporta alcuna differenza alle relazioni tra i nodi e al risultato finale.
 \subsection{Strutture dati}
 \subsubsection{MinHeap}
-Nella classe \textbf{Minheap$<$W$>$} è stata implementata la struttura dati omonima, adeguatamente modificata ed adattata per essere utilizzata nel caso specifico dell'algoritmo di Prim allo scopo di minimizzare le differenze tra codice C++ e pseudocodice e massimizzarne l'efficienza.\\
+Nella classe \textbf{Minheap$<$W$>$} è stata implementata la struttura dati omonima, adeguatamente modificata ed adattata per essere utilizzata nel caso specifico dell'algoritmo di Prim allo scopo di minimizzare le differenze tra codice C++ e pseudocodice, cercando di massimizzarne l'efficienza.\smallskip
+\begin{flushleft}
 Internamente un MinHeap è una lista di coppie chiave-valore dove il primo elemento rappresenta il valore di tipo \textbf{W} utilizzato per l'ordinamento e il secondo il numero intero che identifica un nodo.\\
 Il nodo in posizione 0 rappresenta la radice dell'albero binario e dato un nodo in posizione $i$, il figlio sinistro è rappresentato dal noto in posizione $2i+1$, il sinistro dal nodo in posizione $2i+2$ e il padre dal nodo in posizione$\lfloor \frac{i-1}{2}\rfloor$.\\
-Essendo tutti i nodi inseriti al momento della creazione della struttura dati e mai eliminati se non grazie al metodo \verb|extractMin|, l'operazione di inserimento di un nuovo nodo non è stata implementata e l'ordinamento durante la costruzione di MinHeap è effettuato grazie al \textit{metodo di costruzione di Floyd} implementato nel metodo \verb|min_heapify|. Questo metodo, oltre a non necessitare dell'operatore di inserimento, ha il vantaggio di essere più efficiente della classica costruzione (complessità $O(n)$ anzichè $O(n\cdot\log n)$).\\
+Essendo tutti i nodi inseriti al momento della creazione della struttura dati e mai eliminati se non grazie al metodo \verb|extractMin|, l'operazione di inserimento di un nuovo nodo non è stata implementata.
+L'ordinamento durante la costruzione di MinHeap è effettuato grazie al \textit{metodo di costruzione di Floyd} implementato nel metodo \verb|min_heapify|. Questo metodo, oltre a non necessitare dell'operatore di inserimento, ha il vantaggio di essere più efficiente della classica costruzione (complessità $O(n)$ anzichè $O(n\cdot\log n)$).\\\smallskip
 Essendo necessario, durante l'esecuzione dell'algoritmo di Prim, aggiornare il valore della chiave per alcuni vertici all'interno di Minheap, la struttura dati mantiene una lista di interi \verb|track| che tiene traccia della posizione di ciascun vertice all'interno dell'albero (i.e. $track[i]=\begin{cases}
 -1 & \text{se } i \notin H\\
 \text{\textit{pos. di i}} & \text{se } i \in H\\
-\end{cases}$). Questa lista ci permette inoltre di implementare in maniera naturale l'operatore \verb|exists| che controlla se un vertice è già stato estratto dal MinHeap.
-Essendo l'operazione di aggiornamento effettuata solo in caso il nuovo valore sia minore di quello corrente, il metodo \verb|decreaseUpdate| utilizza la lista \verb|track| per individuare il nodo all'interno dell'heap, ne aggiorna il peso ed effettua un'operazione di \textit{up-heap} (implementata dal metodo privato \verb|push_up|). 
+\end{cases}$ ).\\
+Questa lista ci permette inoltre di implementare in maniera naturale l'operatore \verb|exists| che controlla se un vertice è già stato estratto dal MinHeap.
+Essendo l'operazione di aggiornamento effettuata solo in caso il nuovo valore sia minore di quello corrente, il metodo \verb|decreaseUpdate| utilizza la lista \verb|track| per individuare il nodo all'interno dell'heap, ne aggiorna il peso ed effettua un'operazione di \textit{up-heap} (implementata dal metodo privato \verb|push_up|).
+\end{flushleft}
 \subsubsection{Union-Find (Disjoint-set)}
-La struttura dati è stata implementata nella classe \textbf{UnionFind} utilizzando come in forma di lista di coppie di interi. La coppia in posizione $i$ all'interno della lista è $<parent(i), size(i)>$, dove $parent(i)$ è il padre all'interno dell'albero che rappresenta il set a cui $i$ appartiene o, in caso $i$ sia radice, se stesso. Invece $size(i)$ rappresenta la dimensione dell'albero radicato in $i$, la quale viene utilizzata come criterio di merging durante le operazioni di unione. I metodi \verb|find| e \verb|unite| rappresentano rispettivamente le operazioni di ricerca e unione. Il secondo metodo inoltre si occupa ti aggiornare ad ogni invocazione i valori di $size(i)$.
+Nella classe \textbf{UnionFind} è stata implementata la struttura dati per l'algoritmo Kruskal Union-Find, utilizzando come base un vettore di coppie di interi in cui ogni indice rappresenta un nodo.\\
+La coppia in posizione $i$ all'interno della lista è $<parent(i), size(i)>$, dove $parent(i)$ è il padre del nodo all'interno dell'albero che rappresenta il set a cui $i$ appartiene o, in caso $i$ sia radice, se stesso. Invece $size(i)$ rappresenta la dimensione dell'albero radicato in $i$, la quale viene utilizzata come criterio di merging durante le operazioni di unione.\\
+I metodi \verb|find| e \verb|unite| rappresentano rispettivamente le operazioni di ricerca e unione. Il secondo metodo inoltre si occupa ti aggiornare ad ogni invocazione i valori di $size(i)$.
+\newpage
 \subsection{Strutture per la rappresentazione di grafi}
 \subsubsection{Edge}
-Per rappresentare un lato composto dai  suoi due nodi adiacenti e il peso associato abbiamo creato la classe templetizzata \textbf{Edge$<$W$>$}, con
-%TODO tipo del peso non mi piace troppo
-\textbf{W} tipo del peso.\\
+Per rappresentare un lato composto dai due nodi adiacenti e il peso associato abbiamo creato la classe templetizzata \textbf{Edge$<$W$>$}, con \textbf{W} tipo del peso.\\
 Nella classe abbiamo ridefinito l'operatore di relazione \textbf{$<$} in modo tale che confronti il peso tra due lati, dato che rappresentiamo l'insieme di lati del grafo \textbf{E} utilizzando un \verb|std::vector|$<$\textbf{Edge}$>$ per poter ordinare i lati in ordine crescente facendo uso della funzione \verb|std::sort()| che prende in input le posizioni estreme del vettore e utilizza l'operatore \textbf{$<$} per l'ordinamento.
 \subsubsection{Adjacency List}
+\begin{flushleft}
 Per rappresentare il grafo abbiamo utilizzato una lista di adiacenza implementata dalla classe \textbf{AdjacencyList$<$W$>$}, con \textbf{W} tipo del peso dei lati.\\
-La classe è composta da un \verb|std::vector| in cui ogni indice rappresenta un nodo, e ogni elemento è un \verb|std::vector| di coppie \verb|std::pair| nel quale il primo membro è a sua volta un intero che rappresenta un nodo adiacente all'indice, mentre il secondo elemento è il peso associato al lato che collega i due nodi.\\
-Nella classe abbiamo implementato \verb|total_weight()| per ottenere il peso totale del grafo, \verb|get_nodes()| e \verb|get_edges()| che ritornano il numero di nodi e di lati.\\
+La classe è composta da un \verb|std::vector| in cui ogni indice rappresenta un nodo, e ogni elemento è a sua volta un \verb|std::vector| di coppie \verb|std::pair| nella quale il primo membro è un intero che rappresenta un nodo adiacente all'indice, mentre il secondo elemento è il peso associato al lato che collega i due nodi.\\
+Nella classe abbiamo implementato \verb|total_weight()| per ottenere il peso totale del grafo, \verb|get_nodes()| e \verb|get_edges()| per ritornare rispettivamente il numero di nodi e di lati.
 Per verificare se due nodi sono connessi nel grafo abbiamo implementato la funzione ricorsiva \verb|DFS(int v,int w)|:
 \lstset{language=c++, style=mystyle}
 \lstinputlisting[language=c++]{DFS.cpp}
-La quale internamente chiama la funzione privata \verb|DFS_inside(int v, int w, bool L[])| la cui implementazione è la stessa di \verb|DFS| con l'unica differenza che il vettore \verb|L| non è creato ma ricevuto da \verb|DFS|.\\
+La quale internamente chiama la funzione privata \verb|DFS_inside(int v, int w, bool L[])| la cui implementazione è identica a \verb|DFS| con la differenza che il vettore \verb|L| non viene istanziato ma è fornito da \verb|DFS|.\\
 In \verb|L| ogni indice rappresenta un nodo e ogni elemento indica se quel nodo è stato già visitato durante la ricerca.\\
 Abbiamo implementato anche la funzione \verb|BFS(int v,int w)| in forma iterativa per confrontare la velocità tra i due algoritmi in \textbf{Kruskal naive}:
 \lstset{language=c++, style=mystyle}
 \lstinputlisting[language=c++]{BFS.cpp}
+\end{flushleft}
+
+\newpage
+
 \subsection{Algoritmi}
 \subsubsection{Prim}
 \begin{flushleft}
@@ -190,10 +201,10 @@ Abbiamo implementato anche la funzione \verb|BFS(int v,int w)| in forma iterativ
 	Sono state utilizzate rispettivamente una lista di interi \verb|pi| e una lista di coppie chiave-nodo associato \verb|V| in modo da utilizzare lo stesso contenitore per mantenere il valore di \textit{key} e come lista di input per il MinHeap $Q$.
 	\lstset{language=c++, style=mystyle, firstnumber=2}  	 	
 	\begin{lstlisting}[mathescape=true]
-	unsigned int n_vec = A.get_nodes();
+	unsigned int n_vec = G.get_nodes();
 	std::vector<std::pair<W, int>> V(n_vec);
 	std::vector<int> pi(n_vec);\end{lstlisting}
-	Inizialmente \textit{key} è inizializzato utilizzando \verb|INT_MAX| al posto di $+\infty$ e $\pi$ utilizzando $-1$ al posto di \verb|null|.
+	Inizialmente \textit{key} e $\pi$ sono inizializzate utilizzando \verb|INT_MAX| al posto di $+\infty$ e $-1$ al posto di \verb|null|.
 	\lstset{language=c++, style=mystyle, firstnumber=5}  	 	
 	\begin{lstlisting}[mathescape=true]
 	V[0] = std::make_pair(0, 0);
@@ -211,7 +222,7 @@ Abbiamo implementato anche la funzione \verb|BFS(int v,int w)| in forma iterativ
 	\lstset{language=c++, style=mystyle, firstnumber=13}  	 	
 	\begin{lstlisting}[mathescape=true]
 	std::pair<W, int> u = Q.extractMin();
-	for(std::pair<int, W> v: A[u.second]){\end{lstlisting}
+	for(std::pair<int, W> v: G[u.second]){\end{lstlisting}
 	
 	Per l'aggiornamento dei vettori $\pi$ e \textit{key} all'interno del ciclo:
 	\lstset{language=c++, style=mystyle,backgroundcolor=\color{white}, firstnumber=10}  	 	
@@ -234,19 +245,20 @@ Abbiamo implementato anche la funzione \verb|BFS(int v,int w)| in forma iterativ
 	\lstset{language=c++, style=mystyle,backgroundcolor=\color{white}, firstnumber=16}  	 	
 	\begin{lstlisting}[mathescape=true]
 	return A;\end{lstlisting}
-	La costruzione è implicita ed è rappresentata dall'albero creato da $\pi$, con i pesi memorizzati in \textit{key}. Per esigenze di uniformità con gli altri algoritmi, tale costruzione viene esplicitata costruendo una \textbf{AdjacencyList} che rappresenta il MST. Questa costruzione viene fatta in tempo $O(n)$ e quindi non cambia la complessità asintotica dell'algoritmo. 
+	La costruzione è implicita ed è rappresentata dall'albero creato da $\pi$, con i pesi memorizzati in \textit{key}.\\
+	Per esigenze di uniformità con gli altri algoritmi, tale costruzione viene esplicitata costruendo una \textbf{AdjacencyList$<$W$>$} che rappresenta il MST. Questa costruzione viene fatta in tempo $O(n)$ e quindi non cambia la complessità asintotica dell'algoritmo. 
 	\lstset{language=c++, style=mystyle, firstnumber=22}
 	\begin{lstlisting}
-	AdjacencyList<W> res(n_vec);
+	AdjacencyList<W> A(n_vec);
 	for(unsigned int i = 0; i < n_vec; ++i){
 		if(pi[i] != -1 && pi[i] != i)
-			res.add(Edge(i, pi[i], V[i].first));
+			A.add(Edge(i, pi[i], V[i].first));
 	}
-	return res;\end{lstlisting}
+	return A;\end{lstlisting}
 \end{flushleft}
 \subsubsection{Naive Kruskal}
 \begin{flushleft}
-La nostra implementazione presente nel file \verb|algorithms\kruskal_naive.h| è la seguente:
+Abbiamo implementato l'algoritmo in due versioni diverse presenti nei file \verb|algorithms\kruskal_naive_bfs.h| e \verb|algorithms\kruskal_naive_dfs.h|, l'unica differenza tra le due implementazioni è la chiamata alla funzione per il controllo di presenza di un ciclo durante la costruzione del \textbf{MST}, di seguito andremo ad analizzare la versione che utilizza \textbf{DFS}:
 
 \lstset{language=c++, style=mystyle}
 \lstinputlisting[language=c++]{k_naive.cpp}
@@ -262,8 +274,8 @@ sort edges of G by cost
 \end{lstlisting}
 
 \smallskip
-si è utilizzata la funzione \verb|std::sort()| che assicura l'ordinamento in tempo O(non mi ricordo scrivi tu Enrico ammortizzato)%%TODO 
- è stato necessario ridefinire l'operatore booleano di minimo nell'oggetto EDGE
+si è utilizzata la funzione \verb|std::sort()| che assicura l'ordinamento in tempo O(non mi ricordo scrivi tu Enrico ammortizzato)%TODO 
+, è stato necessario ridefinire l'operatore di minimo \textbf{$<$} nella classe \textbf{Edge$<$W$>$}
  
 \lstset{language=c++, style=mystyle, firstnumber=3} 	 	
 \begin{lstlisting}
@@ -279,7 +291,7 @@ if A U {e} is acyclic then
 \end{lstlisting}
 
 \smallskip
-sono stati implementati sia l'algoritmo ricorsivo DFS che l'algoritmo iterativo BFS, queste due funzioni sono state ottimizzate in modo tale che ritornino TRUE solo se esiste un cammino tra i nodi adiacenti al lato che stiamo analizzando.
+sono stati implementati sia l'algoritmo ricorsivo DFS che l'algoritmo iterativo BFS, queste due funzioni sono state ottimizzate in modo tale che ritornino TRUE solo se esiste già un cammino tra i nodi adiacenti al lato che stiamo analizzando.
 
 Se ritornano FALSE allora possiamo aggiungere il nuovo lato alla lista di adiacenza con la certezza che non verrà a formarsi un ciclo.
 
@@ -289,9 +301,7 @@ if(!A.DFS(E[i].get_node_1(), E[i].get_node_2()))
 \end{lstlisting}
 
 \medskip
-Inoltre si è ottimizato l'agoritmo con un controllo addizionale per far terminare anticipatamente l'iterazione. 
-
-Viene controllato che il numero di lati non sia mai maggiore o uguale al numero di nodi del grafo.
+Inoltre si è ottimizzato l'algoritmo con un controllo addizionale per far terminare anticipatamente l'iterazione, controllando che il numero di lati non sia mai maggiore o uguale al numero di nodi del grafo.
 
 \lstset{language=c++, style=mystyle, firstnumber=7}
 \begin{lstlisting}
@@ -336,8 +346,8 @@ sort edges of G by cost
 \end{lstlisting}
 
 \smallskip
-si è utilizzata la funzione \verb|std::sort()| che assicura l'ordinamento in tempo O(non mi ricordo scrivi tu Enrico ammortizzato)%%TODO 
- è stato necessario ridefinire l'operatore booleano di minimo nell'oggetto EDGE
+si è utilizzata la funzione \verb|std::sort()| che assicura l'ordinamento in tempo O(non mi ricordo scrivi tu Enrico ammortizzato)%TODO 
+, è stato necessario ridefinire l'operatore di minimo \textbf{$<$} nella classe \textbf{Edge$<$W$>$}
  
 \lstset{language=c++, style=mystyle, firstnumber=7} 	 	
 \begin{lstlisting}
@@ -365,9 +375,7 @@ if (U.find(e.get_node_1()) != U.find(e.get_node_2())) {
 \end{lstlisting}
 
 \medskip
-Inoltre si è ottimizato l'algoritmo con un controllo addizionale per far terminare anticipatamente l'iterazione. 
-
-Viene controllato che il numero di lati non sia mai maggiore o uguale al numero di nodi del grafo.
+Inoltre si è ottimizzato l'algoritmo con un controllo addizionale per far terminare anticipatamente l'iterazione, controllando che il numero di lati non sia mai maggiore o uguale al numero di nodi del grafo.
 
 \lstset{language=c++, style=mystyle, firstnumber=13}
 \begin{lstlisting}
@@ -377,18 +385,19 @@ if(A.get_edges() == (A.get_nodes() - 1))
 \end{flushleft}
 \subsection{Note su compilazione e struttura del codice}
 \textit{/*forse spostare in sezione a parte?*/}
+\newpage
 \section{Testing e analisi sperimentali}
 \subsection{Risultati prodotti}
 \begin{flushleft}
 Di seguito è mostrata la tabella completa dei tempi di esecuzione (ignorando il tempo utilizzato per il parsing) degli algoritmi per ogni grafo e relativo peso del MST: 
 \input{time.tex}
 
-La tabella di seguito mostra la media dei tempi di esecuzioni di ogni algoritmo fra istanze di test con lo stesso numero di nodi. Tale tabella serve a chiarire la relazione tra taglia del grafo e tempi di esecuzione a prescindere dall'istanza specifica di esecuzione dei vari algoritmi.
+La tabella di seguito mostra la media dei tempi di esecuzione di ogni algoritmo fra istanze di grafi del dataset con lo stesso numero di nodi. Tale tabella serve a chiarire la relazione tra taglia del grafo e tempi di esecuzione a prescindere dall'istanza specifica di esecuzione dei vari algoritmi.
 \input{time_mean.tex}
-
+\newpage
 \subsection{Analisi e conclusioni}
 Dall'analisi dei tempi d'esecuzione possiamo notare che generalmente gli algoritmi considerati più efficienti (quelli con complessità asintotica $O(m\cdot\log n)$) risultano essere effettivamente i più veloci.\\
-Si può infatti notare dalla Figura \ref{total} come il tempo totale di esecuzione dell'algoritmo di Prim e Kruskal con Union-Find sull'intero test-set ammonti a pochi secondi ($\leq 10 s$) mentre le varie istanze di Naive Kruskal impieghino più di 15 minuti.
+Si può infatti notare dalla Figura \ref{total} come il tempo totale di esecuzione dell'algoritmo di Prim e Kruskal Union-Find sull'intero test-set ammonti a pochi secondi ($\leq 10 s$) mentre le varie istanze di Naive Kruskal impieghino dai 20 ai 30 minuti.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\textwidth,height=\textheight,keepaspectratio]{grafo_costo_totale.png}
@@ -396,7 +405,7 @@ Si può infatti notare dalla Figura \ref{total} come il tempo totale di esecuzio
 	\label{total}
 \end{figure}
 Considerando invece i tempi di esecuzione medi in relazione al numero di nodi di un grafo, ci accorgiamo che, per grafi di piccola taglia, le varianti DFS e BFS di Naive Kruskal risultano essere più efficienti di Prim e Kruskal Union-Find.\\
-Come si può notare dalla Figura \ref{conf_tot}, Kruskal DFS e Kruskal BFS hanno tempi medi d'esecuzione più bassi rispetto agli altri algoritmi per grafi con numero di nodi, rispettivamente, minori di 200 e 100. Questo fenomeno è probabilmente dovuto all'overhead causato dall'utilizzo di strutture dati come MinHeap e Disjoint-Set che diventata tuttavia trascurabile per grafi di taglia sufficientemente alta ed è compensato dai benefici che esse forniscono in termini di efficienza.
+Come si può notare dalla Figura \ref{conf_tot}, Kruskal DFS e Kruskal BFS hanno tempi medi d'esecuzione più bassi rispetto agli altri algoritmi per grafi con numero di nodi, rispettivamente, minori di 200 e 100. Questo fenomeno è probabilmente dovuto all'overhead causato dall'utilizzo di strutture dati come MinHeap e Disjoint-Set che diventa tuttavia trascurabile per grafi di taglia sufficientemente alta ed è compensato dai benefici che esse forniscono in termini di efficienza.
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.9\textwidth,height=\textheight,keepaspectratio]{CONFRONTO_TOTALE.png}

@@ -1,4 +1,4 @@
-AdjacencyList<W> Kruskal_Naive2(int n, std::vector<Edge<W>> E) {
+AdjacencyList<W> Kruskal_Naive_DFS(int n, std::vector<Edge<W>> E) {
     AdjacencyList <W> A(n);
     std::sort(E.begin(), E.end());
     for (int i = 0; i < E.size(); ++i) {

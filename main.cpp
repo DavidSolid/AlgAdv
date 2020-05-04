@@ -90,6 +90,7 @@ int main() {
                 E.emplace_back(G[i]);
             }
 
+            /*
             auto start = std::chrono::steady_clock::now();
 
             auto A_Kruskal_Naive_DFS = Kruskal_Naive_DFS<int>(G[0][0], E);
@@ -103,14 +104,25 @@ int main() {
             auto end_union = std::chrono::steady_clock::now();
 
             auto A_Prim = Prim(AdjacencyList<int>(G[0][0], E));
-            auto end_prim = std::chrono::steady_clock::now();
 
+
+            auto end_prim = std::chrono::steady_clock::now();
             std::chrono::duration<double> elapsed_naive_DFS = end_naive_DFS - start;
             std::chrono::duration<double> elapsed_naive_BFS = end_naive_BFS - end_naive_DFS;
             std::chrono::duration<double> elapsed_union = end_union - end_naive_BFS;
             std::chrono::duration<double> elapsed_prim = end_prim - end_union;
 
+            */
 
+            auto end_naive_BFS = std::chrono::steady_clock::now();
+
+            auto A_Kruskal_Union_Find = Kruskal_Union_Find<int>(G[0][0], E);
+            auto end_union = std::chrono::steady_clock::now();
+
+            std::chrono::duration<double> elapsed_union = end_union - end_naive_BFS;
+
+            std::cout << elapsed_union.count() << std::endl;
+            /*
             std::cout << entry.path() << "  Prim : " << elapsed_prim.count() << "  Kruskal Union Find : "
                       << elapsed_union.count() << "  Kruskal DFS : " << elapsed_naive_DFS.count()
                       << "  Kruskal BFS : " << elapsed_naive_BFS.count() << std::endl;
@@ -120,6 +132,7 @@ int main() {
             std::cout << entry.path() << "  Prim : " << A_Prim.total_weight() << "  Kruskal Union Find : "
                       << A_Kruskal_Union_Find.total_weight() << "  Kruskal DFS : " << A_Kruskal_Naive_DFS.total_weight()
                       << "  Kruskal BFS : " << A_Kruskal_Naive_BFS.total_weight() << std::endl;
+            */
         }
     }
 
